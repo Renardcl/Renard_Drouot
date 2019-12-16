@@ -11,11 +11,14 @@ import CoreData
 
 
 
-class ListeParametresTableViewController: UITableViewController {
+class ListeParametresTableViewController: UITableViewController, NSFetchedResultsControllerDelegate
+{
     
     var parametres = [Parametre]()
     
     private let persistentContainer = NSPersistentContainer(name: "Renard_Drouot")
+    
+    let identifiantParametreCellule = "celluleParametre"
     
 
     override func viewDidLoad() {
@@ -60,15 +63,30 @@ class ListeParametresTableViewController: UITableViewController {
                     //Initialisation des Parametres
                     var newParametre = NSEntityDescription.insertNewObject(forEntityName: "Parametre", into:persistentContainer.viewContext)
                     
-                    newParametre.setValue("Temperature", forKey: "nom")
+                    for i in 1 ... 5{
+                        switch i {
+                        case 1 :
+                            newParametre.setValue("Temperature", forKey: "nom")
+                        case 2 :
+                            newParametre.setValue("PH", forKey: "nom")
+                        case 3 :
+                            newParametre.setValue("Acidité", forKey: "nom")
+                        case 4 :
+                             newParametre.setValue("Durée", forKey: "nom")
+                        case 5 :
+                             newParametre.setValue("Intrant", forKey: "nom")
+                        default :
+                            print("DEBUG: variable i en dehors du nombre de parametres correspondants")
+                        }
                     
-                    //Sauvegarde
-                    do {
-                        try persistentContainer.viewContext.save()
-                        print("PersistentContainer saved")
-                    } catch {
-                        print("Unable to Save Changes")
-                        print("\(error), \(error.localizedDescription)")
+                        //Sauvegarde
+                        do {
+                            try persistentContainer.viewContext.save()
+                            print("PersistentContainer saved")
+                        } catch {
+                            print("Unable to Save Changes")
+                            print("\(error), \(error.localizedDescription)")
+                        }
                     }
                     
                     fetchResults()
@@ -115,14 +133,33 @@ class ListeParametresTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let parametres = fetchedResultsController.fetchedObjects else { return 0 }
         print("Debug : /ListParametre/tableView/parametres.count  : ", parametres.count)
-        return self.parametres.count
+        return parametres.count
     }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: identifiantParametreCellule, for: indexPath)
+        if let parametres = fetchedResultsController.fetchedObjects
+        {
+            print("DEBUG : ListeParametres/tableView/cellForRowAt/Recuperation parametres ok : ", parametres.count)
+            
+            let indexRow = indexPath.row
+            print ("DEBUG : indexpath : ", indexPath.row)
+            cell.textLabel?.text = "\(parametres[indexRow].nom)"
+        }
+        else {
+            print("DEBUG : ListeParametres/tableView/cellForRowAt/Erreur dans recuperation de parametres")
+        }
 
+        return cell
+    }
     
+    /*//Titre et sous-titre
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return nil
+        
+    }*/
     
-    
-    
-    
+
     //FetchedController
     fileprivate lazy var fetchedResultsController: NSFetchedResultsController<Parametre> = {
         // Création Fetch Request
@@ -135,12 +172,12 @@ class ListeParametresTableViewController: UITableViewController {
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
         
         // Paramètrage Fetched Results Controller
-        fetchedResultsController.delegate = self as? NSFetchedResultsControllerDelegate //bizarre
+        fetchedResultsController.delegate = self   //bizarre
         
         return fetchedResultsController
     }()
     
-    
+
     
     
     
