@@ -20,7 +20,7 @@ class ListeParametresTableViewController: UITableViewController, NSFetchedResult
     
     let identifiantParametreCellule = "celluleParametre"
     
-
+//ViewLoad
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -32,14 +32,21 @@ class ListeParametresTableViewController: UITableViewController, NSFetchedResult
             }
                 
             else {
-                initParametre()
+                initParametre(parametreString:"Temperature")
+                initParametre(parametreString:"PH")
+                initParametre(parametreString:"Acidité")
+                initParametre(parametreString:"Durée")
+                initParametre(parametreString:"Intrant")
+                
             }
             print("Debug : /viewDidLoad/fin")
+            
+           //self.delData()
         }
         
         
         
-
+//FetchResult
         func fetchResults(){
             
             do {
@@ -52,32 +59,20 @@ class ListeParametresTableViewController: UITableViewController, NSFetchedResult
             print("DEBUG: parametresLoad/fetch performed")
             
         }
-        
-        func initParametre(){
+   
+//InitParametre
+        func initParametre(parametreString:String){
             fetchResults()
+
             
             if let parametres = fetchedResultsController.fetchedObjects{
-                if parametres.count == 0 {
-                    print("DEBUG: /initParametre/parametres.count = 0 ")
+                if parametres.count <= 5 {
+                    print("DEBUG: /initParametre/parametres.count < 5 ")
                     
                     //Initialisation des Parametres
                     var newParametre = NSEntityDescription.insertNewObject(forEntityName: "Parametre", into:persistentContainer.viewContext)
-                    
-                    for i in 1 ... 5{
-                        switch i {
-                        case 1 :
-                            newParametre.setValue("Temperature", forKey: "nom")
-                        case 2 :
-                            newParametre.setValue("PH", forKey: "nom")
-                        case 3 :
-                            newParametre.setValue("Acidité", forKey: "nom")
-                        case 4 :
-                             newParametre.setValue("Durée", forKey: "nom")
-                        case 5 :
-                             newParametre.setValue("Intrant", forKey: "nom")
-                        default :
-                            print("DEBUG: variable i en dehors du nombre de parametres correspondants")
-                        }
+                    newParametre.setValue(parametreString, forKey: "nom")
+ 
                     
                         //Sauvegarde
                         do {
@@ -87,22 +82,18 @@ class ListeParametresTableViewController: UITableViewController, NSFetchedResult
                             print("Unable to Save Changes")
                             print("\(error), \(error.localizedDescription)")
                         }
-                    }
-                    
+                    //Chargement des nouvelles valeurs
                     fetchResults()
+
                 }
                 else {
-                    print("DEBUG: /initParamtre/nombre parametre >0 :", parametres.count)
-                    
+                    print("DEBUG: /initParamtre/nombre parametre >5 :", parametres.count)
                 }
             }
             else {
                 print("DEBUG: /initParamtre/fetchedObjects failed :", parametres.count)
                     
             }
-            
-            
-
             
             
         }
@@ -122,23 +113,28 @@ class ListeParametresTableViewController: UITableViewController, NSFetchedResult
     }
 
     
-    
-    // MARK: - Table view data source
-
+///Table Views fonctions
+    //Number of Sections
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         return 1
     }
-
+    
+    //Nombre Ligne
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let parametres = fetchedResultsController.fetchedObjects else { return 0 }
         print("Debug : /ListParametre/tableView/parametres.count  : ", parametres.count)
         return parametres.count
     }
     
+    //Remplissage cellule
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: identifiantParametreCellule, for: indexPath)
-        if let parametres = fetchedResultsController.fetchedObjects
+        
+        //configureCell
+        configureCell(cell, at: indexPath)
+        
+       /* if let parametres = fetchedResultsController.fetchedObjects
         {
             print("DEBUG : ListeParametres/tableView/cellForRowAt/Recuperation parametres ok : ", parametres.count)
             
@@ -148,19 +144,20 @@ class ListeParametresTableViewController: UITableViewController, NSFetchedResult
         }
         else {
             print("DEBUG : ListeParametres/tableView/cellForRowAt/Erreur dans recuperation de parametres")
-        }
+        }*/
 
         return cell
     }
     
-    /*//Titre et sous-titre
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return nil
+    func configureCell(_ cell: UITableViewCell, at indexPath : IndexPath){
+        let parametre = fetchedResultsController.object(at: indexPath)
         
-    }*/
+        cell.textLabel?.text = parametre.nom
+    }
+    
     
 
-    //FetchedController
+///FetchedController
     fileprivate lazy var fetchedResultsController: NSFetchedResultsController<Parametre> = {
         // Création Fetch Request
         let fetchRequest: NSFetchRequest<Parametre> = Parametre.fetchRequest()
@@ -177,10 +174,64 @@ class ListeParametresTableViewController: UITableViewController, NSFetchedResult
         return fetchedResultsController
     }()
     
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        
+        switch(type){
+        case .insert:
+            if let indexPath = newIndexPath {
+                tableView.insertRows(at: [indexPath], with: .fade)
+            }
+            print("DEBUG : FetchController/ switch insert")
+            break
+        case .update :
+            if let indexPath = indexPath, let cell = tableView.cellForRow(at: indexPath){
+                print("DEBUG : FetchController/ switch update")
+                configureCell(cell,at : indexPath)
+            }
+        default :
+            print("DEBUG : FetchController/ switch default")
+        }
+        
+    }
+    
+    //fonctions d'updates du controleur
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        print("DEBUG: FetchController/beginUpdates")
+        tableView.beginUpdates()
+    }
+    
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        print("DEBUG: FetchController/endUpdates")
+        tableView.endUpdates()
 
+    }
+ 
     
     
     
+///Autres
+    //Suppression données
+    func delData(){
+        let fetchReq:NSFetchRequest<Parametre> = Parametre.fetchRequest()
+        if let result = try? persistentContainer.viewContext.fetch(fetchReq){
+            for obj in result {
+                persistentContainer.viewContext.delete(obj)
+            }
+        }
+        
+        //Sauvegarde
+        do {
+            try persistentContainer.viewContext.save()
+            print("PersistentContainer saved")
+        } catch {
+            print("Unable to Save Changes")
+            print("\(error), \(error.localizedDescription)")
+        }
+    
+}
+    
+    
+
     
     
     
@@ -241,3 +292,23 @@ class ListeParametresTableViewController: UITableViewController, NSFetchedResult
     */
 
 }
+
+
+//suprression data :
+/*
+let fetchReq:NSFetchRequest<Parametre> = Parametre.fetchRequest()
+if let result = try? persistentContainer.viewContext.fetch(fetchReq){
+    for obj in result {
+        persistentContainer.viewContext.delete(obj)
+    }
+}
+
+//Sauvegarde
+do {
+    try persistentContainer.viewContext.save()
+    print("PersistentContainer saved")
+} catch {
+    print("Unable to Save Changes")
+    print("\(error), \(error.localizedDescription)")
+}
+*/
