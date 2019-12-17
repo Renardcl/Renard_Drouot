@@ -3,11 +3,15 @@
     <entity name="Intrant" representedClassName="Intrant" syncable="YES" codeGenerationType="class">
         <attribute name="nom" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="Module" representedClassName="Module" syncable="YES" codeGenerationType="class">
+        <attribute name="nom" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="Parametre" representedClassName="Parametre" syncable="YES" codeGenerationType="class">
         <attribute name="nom" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
         <element name="Intrant" positionX="-63" positionY="-18" width="128" height="60"/>
         <element name="Parametre" positionX="-54" positionY="0" width="128" height="60"/>
+        <element name="Module" positionX="-54" positionY="0" width="128" height="60"/>
     </elements>
 </model>

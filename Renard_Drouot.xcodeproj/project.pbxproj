@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6A8816D023A8C67A006872EF /* ParametresAffichageTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8816CF23A8C67A006872EF /* ParametresAffichageTableViewController.swift */; };
+		6A8816D223A8CF7A006872EF /* ModulesAffichageTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8816D123A8CF7A006872EF /* ModulesAffichageTableViewController.swift */; };
 		6ADDF92723A77D1D0015B6D1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ADDF92623A77D1D0015B6D1 /* AppDelegate.swift */; };
 		6ADDF92923A77D1D0015B6D1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ADDF92823A77D1D0015B6D1 /* ViewController.swift */; };
 		6ADDF92C23A77D1D0015B6D1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6ADDF92A23A77D1D0015B6D1 /* Main.storyboard */; };
@@ -35,6 +37,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6A8816CF23A8C67A006872EF /* ParametresAffichageTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParametresAffichageTableViewController.swift; sourceTree = "<group>"; };
+		6A8816D123A8CF7A006872EF /* ModulesAffichageTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModulesAffichageTableViewController.swift; sourceTree = "<group>"; };
 		6ADDF92323A77D1D0015B6D1 /* Renard_Drouot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Renard_Drouot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6ADDF92623A77D1D0015B6D1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6ADDF92823A77D1D0015B6D1 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -104,6 +108,8 @@
 				6ADDF92D23A77D1D0015B6D1 /* Renard_Drouot.xcdatamodeld */,
 				6ADDF95723A77E3B0015B6D1 /* MenuViewController.swift */,
 				6ADDF95923A784D80015B6D1 /* ListeParametresTableViewController.swift */,
+				6A8816CF23A8C67A006872EF /* ParametresAffichageTableViewController.swift */,
+				6A8816D123A8CF7A006872EF /* ModulesAffichageTableViewController.swift */,
 			);
 			path = Renard_Drouot;
 			sourceTree = "<group>";
@@ -239,6 +245,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6A8816D223A8CF7A006872EF /* ModulesAffichageTableViewController.swift in Sources */,
+				6A8816D023A8C67A006872EF /* ParametresAffichageTableViewController.swift in Sources */,
 				6ADDF92F23A77D1D0015B6D1 /* Renard_Drouot.xcdatamodeld in Sources */,
 				6ADDF92923A77D1D0015B6D1 /* ViewController.swift in Sources */,
 				6ADDF92723A77D1D0015B6D1 /* AppDelegate.swift in Sources */,
