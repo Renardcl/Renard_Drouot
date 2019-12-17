@@ -27,6 +27,7 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("DEBUG : /Module/viewLoad/Push Validé !")
         
         titre.title="Modules"
         
