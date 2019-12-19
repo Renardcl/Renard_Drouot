@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14460.32" systemVersion="17G9016" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14460.32" systemVersion="17G8030" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Entity1" representedClassName="Entity1" syncable="YES" codeGenerationType="class"/>
     <entity name="Intrant" representedClassName="Intrant" syncable="YES" codeGenerationType="class">
         <attribute name="nom" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="parametre" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Parametre" inverseName="intrants" inverseEntity="Parametre" syncable="YES"/>
     </entity>
     <entity name="Modele" representedClassName="Modele" syncable="YES" codeGenerationType="class">
         <attribute name="nom" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="modules" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Module" inverseName="modele" inverseEntity="Module" syncable="YES"/>
     </entity>
     <entity name="Module" representedClassName="Module" syncable="YES" codeGenerationType="class">
         <attribute name="nom" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="modele" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Modele" inverseName="modules" inverseEntity="Modele" syncable="YES"/>
+        <relationship name="parametres" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Parametre" inverseName="module" inverseEntity="Parametre" syncable="YES"/>
     </entity>
     <entity name="Parametre" representedClassName="Parametre" syncable="YES" codeGenerationType="class">
         <attribute name="nom" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="intrants" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Intrant" inverseName="parametre" inverseEntity="Intrant" syncable="YES"/>
+        <relationship name="module" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Module" inverseName="parametres" inverseEntity="Module" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Intrant" positionX="-63" positionY="-18" width="128" height="60"/>
-        <element name="Modele" positionX="-54" positionY="0" width="128" height="60"/>
-        <element name="Module" positionX="-54" positionY="0" width="128" height="60"/>
-        <element name="Parametre" positionX="-54" positionY="0" width="128" height="60"/>
-        <element name="Entity1" positionX="-27" positionY="27" width="128" height="45"/>
+        <element name="Entity1" positionX="81.37109375" positionY="59.94921875" width="128" height="45"/>
+        <element name="Intrant" positionX="362.2890625" positionY="-72.0625" width="128" height="75"/>
+        <element name="Modele" positionX="-167.9921875" positionY="-89.19921875" width="128" height="75"/>
+        <element name="Module" positionX="7.9921875" positionY="-90.375" width="131.75" height="90"/>
+        <element name="Parametre" positionX="172.67578125" positionY="-88.0703125" width="128" height="90"/>
     </elements>
 </model>

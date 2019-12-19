@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="dcw-xZ-rsa">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -23,7 +23,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Paramterer"/>
                                 <connections>
-                                    <segue destination="q2X-Kg-dkr" kind="show" identifier="AddModele" id="qHr-9Z-ivw"/>
+                                    <segue destination="q2X-Kg-dkr" kind="show" identifier="" id="qHr-9Z-ivw"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TDO-wu-f3Q">
@@ -58,6 +58,11 @@
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                             <items>
                                 <navigationItem title="Title" id="NwX-4I-NPz">
+                                    <barButtonItem key="leftBarButtonItem" systemItem="done" id="2bm-6U-Is7">
+                                        <connections>
+                                            <segue destination="BYZ-38-t0r" kind="show" id="CdB-X5-OSN"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem key="rightBarButtonItem" systemItem="add" id="B7e-aa-zWp">
                                         <connections>
                                             <action selector="ActionAddButton:" destination="q2X-Kg-dkr" id="PZv-di-XuO"/>
@@ -84,6 +89,9 @@
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="E4D-WK-Hy4" kind="show" identifier="ModifyModele" id="Wcw-dT-Kh3"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -115,24 +123,6 @@
             </objects>
             <point key="canvasLocation" x="1260" y="-687"/>
         </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="gjE-dg-hl9">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="dcw-xZ-rsa" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Sk4-Si-3kd">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="alA-UQ-LtZ"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="oYr-b2-sBL" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-586" y="126"/>
-        </scene>
         <!--Modules Affichage Table View Controller-->
         <scene sceneID="HUe-WI-TBv">
             <objects>
@@ -145,7 +135,20 @@
                             <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                             <items>
-                                <navigationItem title="Title" id="dL0-dG-2Wt">
+                                <navigationItem id="dL0-dG-2Wt">
+                                    <nil key="title"/>
+                                    <barButtonItem key="leftBarButtonItem" systemItem="done" id="A37-Zj-SgS">
+                                        <connections>
+                                            <segue destination="q2X-Kg-dkr" kind="show" identifier="Cancel" id="Uhq-eT-it6"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <textField key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" id="ubs-3o-D7m">
+                                        <rect key="frame" x="112.5" y="7" width="150" height="30"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <nil key="textColor"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits"/>
+                                    </textField>
                                     <barButtonItem key="rightBarButtonItem" systemItem="add" id="YBE-zJ-gYt">
                                         <connections>
                                             <action selector="ActionAddButton:" destination="E4D-WK-Hy4" id="rnC-hN-uUK"/>
@@ -163,7 +166,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="htL-Pk-fKB">
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="htL-Pk-fKB">
                                             <rect key="frame" x="16" y="0.0" width="343" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -172,6 +175,9 @@
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="1QK-hw-cJZ" kind="show" identifier="ModifyModule" id="KY8-ZY-B6y"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -181,7 +187,7 @@
                     </tableView>
                     <connections>
                         <outlet property="AddButton" destination="YBE-zJ-gYt" id="tyf-fK-e0P"/>
-                        <outlet property="titre" destination="dL0-dG-2Wt" id="a8b-0K-lOw"/>
+                        <outlet property="titreTextField" destination="ubs-3o-D7m" id="WVd-Ct-JeG"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4Ke-2M-ieM" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -196,15 +202,28 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <navigationBar key="tableHeaderView" contentMode="scaleToFill" misplaced="YES" id="d9m-a2-jvU">
+                        <navigationBar key="tableHeaderView" contentMode="scaleToFill" id="d9m-a2-jvU">
                             <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                             <items>
-                                <navigationItem title="Title" id="sqB-FR-08A">
+                                <navigationItem id="sqB-FR-08A">
+                                    <nil key="title"/>
+                                    <barButtonItem key="leftBarButtonItem" systemItem="done" id="66T-4I-cx8">
+                                        <connections>
+                                            <segue destination="E4D-WK-Hy4" kind="show" identifier="Cancel" id="GHk-YL-O2m"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <textField key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" id="mO5-op-pqU">
+                                        <rect key="frame" x="112.5" y="7" width="150" height="30"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <nil key="textColor"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits"/>
+                                    </textField>
                                     <barButtonItem key="rightBarButtonItem" systemItem="add" id="DTX-MX-cEm">
                                         <connections>
                                             <action selector="ActionAddButton:" destination="1QK-hw-cJZ" id="Ka9-8I-Dsf"/>
-                                            <segue destination="jxm-cM-YYX" kind="show" id="tf5-sw-pIc"/>
+                                            <segue destination="jxm-cM-YYX" kind="show" identifier="AddParametre" id="tf5-sw-pIc"/>
                                         </connections>
                                     </barButtonItem>
                                 </navigationItem>
@@ -236,8 +255,7 @@
                     </tableView>
                     <connections>
                         <outlet property="AddButton" destination="DTX-MX-cEm" id="kxP-3e-vCN"/>
-                        <outlet property="titre" destination="sqB-FR-08A" id="Rna-HW-F6p"/>
-                        <outlet property="titreParametresAffichage" destination="jK1-w5-4wn" id="tit-ed-DT9"/>
+                        <outlet property="titreTextField" destination="mO5-op-pqU" id="zCX-pa-ouG"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="YSG-I5-gFr" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -252,12 +270,16 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <navigationBar key="tableHeaderView" contentMode="scaleToFill" misplaced="YES" id="w7p-Yv-Atp">
+                        <navigationBar key="tableHeaderView" contentMode="scaleToFill" id="w7p-Yv-Atp">
                             <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                             <items>
                                 <navigationItem title="Title" id="vTi-uP-R9Z">
-                                    <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="kcu-E2-Qdb"/>
+                                    <barButtonItem key="leftBarButtonItem" systemItem="done" id="kcu-E2-Qdb">
+                                        <connections>
+                                            <segue destination="1QK-hw-cJZ" kind="show" identifier="Cancel" id="XIT-R6-eAE"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem key="rightBarButtonItem" systemItem="add" id="x2K-qc-BGv"/>
                                 </navigationItem>
                             </items>
@@ -297,4 +319,9 @@
             <point key="canvasLocation" x="3796" y="145"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="KY8-ZY-B6y"/>
+        <segue reference="GHk-YL-O2m"/>
+        <segue reference="Uhq-eT-it6"/>
+    </inferredMetricsTieBreakers>
 </document>

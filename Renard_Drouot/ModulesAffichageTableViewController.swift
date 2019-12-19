@@ -13,11 +13,12 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
 
     @IBOutlet weak var titre: UINavigationItem!
     @IBOutlet weak var AddButton: UIBarButtonItem!
-
-    
+    @IBOutlet weak var titreTextField: UITextField!
     
     
     var module = [Module]()
+    
+    var modele = Modele()
     
     private let persistentContainer = NSPersistentContainer(name: "Renard_Drouot")
     
@@ -25,13 +26,13 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
     
     var idModele:String = ""   //nom?
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("DEBUG : /Module/viewLoad/Push Validé !")
         
-        titre.title="Modules"
-        
-        print("DEBUG: /module/ViewLoad/idModele", idModele)
+        titreTextField.text = idModele
+        print("DEBUG: /module/ViewLoad/idModele-----------------", idModele)
+
         
         //Charge le coredata
         persistentContainer.loadPersistentStores { (persistentStoredescription, error) in
@@ -41,18 +42,20 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
             }
                 
             else {
-                //TODO
+                //self.delData()
+                
+                //print("DEBUG: modele recup : ", self.modele.nom)
+                self.recupModele()
+                self.fetchResults()
                 
             }
-            print("Debug : /viewDidLoad/fin")
-            
-            //self.delData()
+            //print("Debug : /viewDidLoad/fin")
         }
         
     }
+ 
     
-
-    
+///tableView functions
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         return 1
@@ -60,16 +63,22 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let modules = fetchedResultsController.fetchedObjects else { return 0 }
-        print("Debug : /Modules/tableView/modules.count  : ", modules.count)
+        //print("Debug : /Modules/tableView/modules.count  : ", modules.count)
         return modules.count
     }
     
     //Remplissage cellule
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: identifiantModuleCellule, for: indexPath)
+        let module = fetchedResultsController.object(at: indexPath)
         
-        //configureCell
-        //Todo : configureCell(cell, at: indexPath)
+        if (module.modele == modele) {
+            print("DEBUG: /module/remplissage Cellule/ modele match !")
+            
+            //configureCell
+            configureCell(cell, at: indexPath)
+        }
+
         
         
         return cell
@@ -77,14 +86,125 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
     
     func configureCell(_ cell: UITableViewCell, at indexPath : IndexPath){
         let module = fetchedResultsController.object(at: indexPath)
+    
         
         cell.textLabel?.text = module.nom
     }
     
     
+///FetchResult
+    func fetchResults(){
+        modele.nom = titreTextField.text
+        
+        do {
+            try self.fetchedResultsController.performFetch()
+        } catch {
+            let fetchError = error as NSError
+            print("Unable to Perform Fetch Request")
+            print("\(fetchError), \(fetchError.localizedDescription)")
+        }
+
+        //print("DEBUG: /Modules/fetchResult/fetch performed")
+        
+    }
+
+    
+///Creation object Modele
+    func newModule(){
+        fetchResults()
+        
+        if let modules = fetchedResultsController.fetchedObjects{
+            //print("DEBUG: /Module/newModule/modules fetched OK ")
+            
+            //Initialisation des Parametres
+            var newModule = NSEntityDescription.insertNewObject(forEntityName: "Module", into:persistentContainer.viewContext)
+            newModule.setValue("newModule", forKey: "nom")
+            
+            
+            //Sauvegarde
+            do {
+                try persistentContainer.viewContext.save()
+                print("PersistentContainer saved")
+            } catch {
+                print("Unable to Save Changes")
+                print("\(error), \(error.localizedDescription)")
+            }
+            
+            //Chargement des nouvelles valeurs
+            fetchResults()
+        }
+        else {
+            print("DEBUG: /newModule/fetchedObjects Failed")
+        }
+        //print("DEBUG: /Modele/NewModele/fin new Modele")
+    }
     
     
-    ///FetchedController
+///Association au Modele
+    func associationAuModele()
+    {
+        fetchResults()
+        
+        ///Recuperation du nouveau module
+        //fecth request
+        let fetchRequestModule: NSFetchRequest<Module> = Module.fetchRequest()
+        
+        //Recuperation des modules du persistent container
+        if let modules = try? persistentContainer.viewContext.fetch(fetchRequestModule){
+            var module:Module
+            print("DEBUG: /Module/association au Modele/module recup ")
+            
+            //Parcours des modules pour récuperer le bon module
+            for moduleParcours in modules {
+                if moduleParcours.nom == "newModule" {
+                    //Recuperation du module dans module
+                    module = moduleParcours
+                    
+                    //Fonctionnels ??
+                    //Attribution du module recuperé précédement au modèle
+                    modele.addToModules(module)
+
+                }
+            }
+        
+            //Sauvegarde
+            do {
+                try persistentContainer.viewContext.save()
+                print("PersistentContainer saved")
+            } catch {
+                print("Unable to Save Changes")
+                print("\(error), \(error.localizedDescription)")
+            }
+        
+            //Chargement des nouvelles valeurs
+            fetchResults()
+
+        }
+    }
+
+///Recup modele
+    func recupModele() {
+        //Recup du modele passé en parametre dans le view controller
+        // Création Fetch Request
+        let fetchRequestModele: NSFetchRequest<Modele> = Modele.fetchRequest()
+        
+        //Parcours des modeles pour récuperer le bon modele
+        if let modeles = try? persistentContainer.viewContext.fetch(fetchRequestModele)
+        {
+            for modeleParcours in modeles {
+                if modeleParcours.nom == idModele {
+                    //Recuperation du modele
+                    modele = modeleParcours
+                }
+            }
+        }
+        else {print("DEBUG:  /module/recupModele/fetchRequest MODELE failed")}
+    }
+
+    
+    
+    
+///FetchedController
     fileprivate lazy var fetchedResultsController: NSFetchedResultsController<Module> = {
         // Création Fetch Request
         let fetchRequest: NSFetchRequest<Module> = Module.fetchRequest()
@@ -96,7 +216,7 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
         
         // Paramètrage Fetched Results Controller
-        fetchedResultsController.delegate = self   //bizarre
+        fetchedResultsController.delegate = self
         
         return fetchedResultsController
     }()
@@ -110,15 +230,18 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
             if let indexPath = newIndexPath {
                 tableView.insertRows(at: [indexPath], with: .fade)
             }
-            print("DEBUG : /Module/FetchController/ switch insert")
+            print("DEBUG : /Module/FetchController/ INSERT")
             break
         case .update :
             if let indexPath = indexPath, let cell = tableView.cellForRow(at: indexPath){
-                print("DEBUG : /Module/FetchController/ switch update")
-                //TODO : configureCell(cell,at : indexPath)
+                print("DEBUG : /Module/FetchController/ UPDATE")
+                configureCell(cell,at : indexPath)
             }
+        case .delete :
+            print("DEBUG : /ModUle/FetchController/ DELETE")
+        
         default :
-            print("DEBUG : /Module/FetchController/ switch default")
+         print("DEBUG : /Module/FetchController/ DEFAULT")
         }
         
     }
@@ -133,7 +256,7 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
     
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        print("DEBUG: /Module/FetchController/endUpdates")
+       // print("DEBUG: /Module/FetchController/endUpdates")
         tableView.endUpdates()
         
     }
@@ -142,29 +265,55 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
 ///Segue functions
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "AddModule" {
-            //TODO : newModule()
+            //On crée un nouveau module
+            newModule()
             
-            print("DEBUG: /Module/ segueAction/ avant passage parametre newModule")
-            //TODO
-            /*if let destinationVC = segue.destination as? ModulesAffichageTableViewController {
-                destinationVC.idModele = "newModule"
+            //On l'associe au modele précédement grace a son nom "newModule"
+            associationAuModele()
+            
+            print("DEBUG: /Module/ segueAction/ avant passage parametre newModule : ", idModele)
+            if let destinationVC = segue.destination as? ParametresAffichageTableViewController {
+                destinationVC.idModele =  idModele
+                destinationVC.idModule = "newModule"
             }
             else{
                 print("DEBUG: /Module/ segueAction/ definition du segue destination failed")
-            }*/
+            }
         }
+        
+        if segue.identifier == "Cancel" {
+        }
+        
         if segue.identifier == "ModifyModule" {
-            /*
-            //TODO :
-            if let destinationVC = segue.destination as? ModulesAffichageTableViewController {
-                //TODO : passer un identifiant du modele : destinationVC.idModele = "newModele"
-            }*/
+            guard let indexPath = tableView.indexPathForSelectedRow else {return }
+            let module = fetchedResultsController.object(at: indexPath)
+            
+            if let destinationVC = segue.destination as? ParametresAffichageTableViewController {
+                destinationVC.idModele = idModele
+                destinationVC.idModule = module.nom!
+            }
+            else{
+                print("DEBUG: /Module/ segueAction/ definition du segue destination failed")
+            }
         }
         
     }
     
     
 ///Autres
+    override func viewWillDisappear(_ animated: Bool) {
+        //print("DEBUG op : Wiew will diseappear")
+        fetchResults()
+        do {
+            try persistentContainer.viewContext.save()
+            print("PersistentContainer saved")
+        } catch {
+            print("Unable to Save Changes")
+            print("\(error), \(error.localizedDescription)")
+        }
+    }
+    
+
     //Suppression données
     func delData(){
         let fetchReq:NSFetchRequest<Module> = Module.fetchRequest()
@@ -184,5 +333,15 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
         }
     }
 
+    
+    override func viewWillAppear(_ animated: Bool)
+    {
+        fetchResults()
+        
+    }
+    
+    func saveContext(){
+        
+    }
 
 }

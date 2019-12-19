@@ -21,10 +21,14 @@ class ListeParametresTableViewController: UITableViewController, NSFetchedResult
     
     let identifiantParametreCellule = "celluleParametre"
     
+    var idModele = ""
+    
 //ViewLoad
     override func viewDidLoad() {
         super.viewDidLoad()
         titre.title="Liste de Paramètres"
+        
+
         
         //Charge le coredata
         persistentContainer.loadPersistentStores { (persistentStoredescription, error) in
@@ -34,16 +38,20 @@ class ListeParametresTableViewController: UITableViewController, NSFetchedResult
             }
                 
             else {
+                //self.delData()
+                
                 initParametre(parametreString:"Temperature")
                 initParametre(parametreString:"PH")
                 initParametre(parametreString:"Acidité")
                 initParametre(parametreString:"Durée")
                 initParametre(parametreString:"Intrant")
                 
+
+                
             }
-            print("Debug : /viewDidLoad/fin")
+            //print("Debug : /viewDidLoad/fin")
             
-           //self.delData()
+
         }
         
         
@@ -68,8 +76,8 @@ class ListeParametresTableViewController: UITableViewController, NSFetchedResult
 
             
             if let parametres = fetchedResultsController.fetchedObjects{
-                if parametres.count <= 5 {
-                    print("DEBUG: /initParametre/parametres.count < 5 ")
+                if parametres.count < 5 {
+                    //print("DEBUG: /initParametre/parametres.count < 5 ")
                     
                     //Initialisation des Parametres
                     var newParametre = NSEntityDescription.insertNewObject(forEntityName: "Parametre", into:persistentContainer.viewContext)
@@ -90,7 +98,7 @@ class ListeParametresTableViewController: UITableViewController, NSFetchedResult
 
                 }
                 else {
-                    print("DEBUG: /initParamtre/nombre parametre >5 :", parametres.count)
+                    //print("DEBUG: /initParamtre/nombre parametre >5 :", parametres.count)
                 }
             }
             else {
@@ -126,7 +134,7 @@ class ListeParametresTableViewController: UITableViewController, NSFetchedResult
     //Nombre Ligne
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let parametres = fetchedResultsController.fetchedObjects else { return 0 }
-        print("Debug : /ListParametre/tableView/parametres.count  : ", parametres.count)
+        //print("Debug : /ListParametre/tableView/parametres.count  : ", parametres.count)
         return parametres.count
     }
     
@@ -136,18 +144,6 @@ class ListeParametresTableViewController: UITableViewController, NSFetchedResult
         
         //configureCell
         configureCell(cell, at: indexPath)
-        
-       /* if let parametres = fetchedResultsController.fetchedObjects
-        {
-            print("DEBUG : ListeParametres/tableView/cellForRowAt/Recuperation parametres ok : ", parametres.count)
-            
-            let indexRow = indexPath.row
-            print ("DEBUG : indexpath : ", indexPath.row)
-            cell.textLabel?.text = "\(parametres[indexRow].nom)"
-        }
-        else {
-            print("DEBUG : ListeParametres/tableView/cellForRowAt/Erreur dans recuperation de parametres")
-        }*/
 
         return cell
     }
@@ -209,7 +205,16 @@ class ListeParametresTableViewController: UITableViewController, NSFetchedResult
 
     }
  
-    
+///Segue functions
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "Cancel" {
+            if let destinationVC = segue.destination as? ParametresAffichageTableViewController {
+                print("DEBUG: ListParametre/Cancel/idModele", idModele)
+                destinationVC.idModele = idModele
+            }
+        }
+        
+    }
     
     
 ///Autres
@@ -231,87 +236,12 @@ class ListeParametresTableViewController: UITableViewController, NSFetchedResult
             print("\(error), \(error.localizedDescription)")
         }
     
+    }
+
 }
     
-    
 
     
     
     
-    
-    /*
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
 
-        // Configure the cell...
-
-        return cell
-    }
-    */
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
-}
-
-
-//suprression data :
-/*
-let fetchReq:NSFetchRequest<Parametre> = Parametre.fetchRequest()
-if let result = try? persistentContainer.viewContext.fetch(fetchReq){
-    for obj in result {
-        persistentContainer.viewContext.delete(obj)
-    }
-}
-
-//Sauvegarde
-do {
-    try persistentContainer.viewContext.save()
-    print("PersistentContainer saved")
-} catch {
-    print("Unable to Save Changes")
-    print("\(error), \(error.localizedDescription)")
-}
-*/

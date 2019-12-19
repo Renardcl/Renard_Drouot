@@ -28,6 +28,8 @@ class ModelesTableViewController: UITableViewController, NSFetchedResultsControl
         
         titre.title = "Modèles"
         
+        print("DEBUG: Modèles-------------------------------------------------")
+        
         //Charge le coredata
         persistentContainer.loadPersistentStores { (persistentStoredescription, error) in
             if let error = error {
@@ -36,18 +38,18 @@ class ModelesTableViewController: UITableViewController, NSFetchedResultsControl
             }
                 
             else {
+                
+                //self.delData()
+                
                 self.fetchResults()
                 
             }
-            print("Debug : /Modele/viewDidLoad/fin")
+            //print("Debug : /Modele/viewDidLoad/fin")
             
-            //self.delData()
+
         }
         
     }
-
-
-    
     
 ///FetchResult
     func fetchResults(){
@@ -59,30 +61,30 @@ class ModelesTableViewController: UITableViewController, NSFetchedResultsControl
             print("Unable to Perform Fetch Request")
             print("\(fetchError), \(fetchError.localizedDescription)")
         }
-        print("DEBUG: fetchResult/fetch performed")
+        //print("DEBUG: /fetchResult/fetch performed")
         
     }
     
- ///Creation object
+ ///Creation object Modele
     func newModele(){
         fetchResults()
         
         if let modeles = fetchedResultsController.fetchedObjects{
-            print("DEBUG: /newModele/modeles ? ")
+            //print("DEBUG: /Modele/newModele/modeles fetched OK ")
             
             //Initialisation des Parametres
             var newModele = NSEntityDescription.insertNewObject(forEntityName: "Modele", into:persistentContainer.viewContext)
             newModele.setValue("newModele", forKey: "nom")
             
             
-            /*//Sauvegarde
+            //Sauvegarde
             do {
                 try persistentContainer.viewContext.save()
                 print("PersistentContainer saved")
             } catch {
                 print("Unable to Save Changes")
                 print("\(error), \(error.localizedDescription)")
-            }*/
+            }
             
             //Chargement des nouvelles valeurs
             fetchResults()
@@ -90,7 +92,8 @@ class ModelesTableViewController: UITableViewController, NSFetchedResultsControl
         else {
             print("DEBUG: /newModele/fetchedObjects Failed")
         }
-        print("DEBUG: /Modele/NewModele/fin new Modele")
+        //print("DEBUG: /Modele/NewModele/fin new Modele")
+
     }
     
 ///tableView functions
@@ -126,6 +129,7 @@ class ModelesTableViewController: UITableViewController, NSFetchedResultsControl
     
     
     
+    
 ///FetchedController
     fileprivate lazy var fetchedResultsController: NSFetchedResultsController<Modele> = {
         // Création Fetch Request
@@ -138,7 +142,7 @@ class ModelesTableViewController: UITableViewController, NSFetchedResultsControl
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
         
         // Paramètrage Fetched Results Controller
-        fetchedResultsController.delegate = self   //bizarre
+        fetchedResultsController.delegate = self   
         
         return fetchedResultsController
     }()
@@ -151,15 +155,17 @@ class ModelesTableViewController: UITableViewController, NSFetchedResultsControl
             if let indexPath = newIndexPath {
                 tableView.insertRows(at: [indexPath], with: .fade)
             }
-            print("DEBUG : /Modele/FetchController/ switch insert")
+            print("DEBUG : /Modele/FetchController/ INSERT")
             break
         case .update :
             if let indexPath = indexPath, let cell = tableView.cellForRow(at: indexPath){
-                print("DEBUG : /Modele/FetchController/ switch update")
-                //TODO : configureCell(cell,at : indexPath)
+                print("DEBUG : /Modele/FetchController/ UPDATE")
+                configureCell(cell,at : indexPath)
             }
+        case .delete :
+            print("DEBUG : /Modele/FetchController/ DELETE")
         default :
-            print("DEBUG : /Modele/FetchController/ switch default")
+            print("DEBUG : /Modele/FetchController/ DEFAULT")
         }
         
     }
@@ -172,7 +178,7 @@ class ModelesTableViewController: UITableViewController, NSFetchedResultsControl
     }
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        print("DEBUG: /Modele/FetchController/DidChangeContent/endUpdates")
+       // print("DEBUG: /Modele/FetchController/DidChangeContent/endUpdates")
         tableView.endUpdates()
         
     }
@@ -181,26 +187,30 @@ class ModelesTableViewController: UITableViewController, NSFetchedResultsControl
 ///Segue functions
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "AddModele" {
+            //On crée un nouveau modele
             newModele()
             
-            print("DEBUG: /Modele/ segueAction/ avant passage parametre newModele")
+            //print("DEBUG: /Modele/ segueAction/ avant passage parametre newModele")
+            
             if let destinationVC = segue.destination as? ModulesAffichageTableViewController {
                 destinationVC.idModele = "newModele"
+
             }
             else{
                 print("DEBUG: /Modele/ segueAction/ definition du segue destination failed")
             }
         }
+        
         if segue.identifier == "ModifyModele" {
-            newModele()
+            guard let indexPath = tableView.indexPathForSelectedRow else {return }
+            let modele = fetchedResultsController.object(at: indexPath)
             
             if let destinationVC = segue.destination as? ModulesAffichageTableViewController {
-                //TODO : passer un identifiant du modele : destinationVC.idModele = "newModele"
+                destinationVC.idModele = modele.nom!
             }
         }
         
     }
-    
     
 ///Autres
     //Suppression données
@@ -222,6 +232,12 @@ class ModelesTableViewController: UITableViewController, NSFetchedResultsControl
         }
     }
 
+    
+   override func viewWillAppear(_ animated: Bool)
+   {
+        fetchResults()
+
+    }
 
 
 }

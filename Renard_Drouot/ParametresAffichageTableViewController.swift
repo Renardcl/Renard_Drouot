@@ -27,9 +27,9 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
         //TODO : Creation d'un nouveau module dans lequel le parametre selctionner sera ajouter
         
     }
+    @IBOutlet weak var titreTextField: UITextField!
     
-    
-    @IBOutlet weak var titre: UINavigationItem!
+
     
     var parametre = [Parametre]()
     
@@ -37,11 +37,14 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
     
     let identifiantParametreCellule = "CelluleParametreAffichage"
     
+    var idModele:String = ""
+    var idModule:String = ""
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        titre.title="Paramètres" //TODO : Ajouter nom module
+        titreTextField.text = idModule
         
         //Charge le coredata
         persistentContainer.loadPersistentStores { (persistentStoredescription, error) in
@@ -51,29 +54,25 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
             }
                 
             else {
-                //TODO
-                
+                //self.delData()
+                self.fetchResults()
             }
             print("Debug : /viewDidLoad/fin")
-            
-            //self.delData()
         }
         
-        
-
+    }
+    
 //FetchResult
-        func fetchResults(){
-            
-            do {
-                try self.fetchedResultsController.performFetch()
-            } catch {
-                let fetchError = error as NSError
-                print("Unable to Perform Fetch Request")
-                print("\(fetchError), \(fetchError.localizedDescription)")
-            }
-            print("DEBUG: parametresLoad/fetch performed")
-            
+    func fetchResults(){
+        
+        do {
+            try self.fetchedResultsController.performFetch()
+        } catch {
+            let fetchError = error as NSError
+            print("Unable to Perform Fetch Request")
+            print("\(fetchError), \(fetchError.localizedDescription)")
         }
+        print("DEBUG: /Parametre/fetchResults/fetch performed")
         
     }
 
@@ -121,7 +120,7 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
         
         // Paramètrage Fetched Results Controller
-        fetchedResultsController.delegate = self   //bizarre
+        fetchedResultsController.delegate = self  
         
         return fetchedResultsController
     }()
@@ -134,32 +133,82 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
             if let indexPath = newIndexPath {
                 tableView.insertRows(at: [indexPath], with: .fade)
             }
-            print("DEBUG : FetchController/ switch insert")
+            print("DEBUG : /Parametre/FetchController/ switch insert")
             break
         case .update :
             if let indexPath = indexPath, let cell = tableView.cellForRow(at: indexPath){
-                print("DEBUG : FetchController/ switch update")
+                print("DEBUG : /Parametre/FetchController/ switch update")
                 //TODO : configureCell(cell,at : indexPath)
             }
         default :
-            print("DEBUG : FetchController/ switch default")
+            print("DEBUG : /Parametre/FetchController/ switch default")
         }
         
     }
     
     //fonctions d'updates du controleur
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        print("DEBUG: FetchController/beginUpdates")
+        print("DEBUG: /Parametre/FetchController/beginUpdates")
         tableView.beginUpdates()
     }
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        print("DEBUG: FetchController/endUpdates")
+        print("DEBUG: /Parametre/FetchController/endUpdates")
         tableView.endUpdates()
         
     }
     
+///Segue functions
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "AddParametre" {
+            if let destinationVC = segue.destination as? ListeParametresTableViewController {
+                print("DEBUG: Parametre/segueAddParametre/idModele", idModele)
+                destinationVC.idModele = idModele
+            }
+        }
+        if segue.identifier == "Cancel" {
+             if let destinationVC = segue.destination as? ModulesAffichageTableViewController {
+             destinationVC.idModele = idModele
+             }
+        }
+        if segue.identifier == "ModifyParametre" {
+            /*if let destinationVC = segue.destination as? ModulesAffichageTableViewController {
+             destinationVC.idModele =
+             }*/
+        }
+        
+    }
     
+///Autres
+    override func viewWillDisappear(_ animated: Bool) {
+        //print("DEBUG op : Wiew will diseappear")
+        fetchResults()
+        do {
+            try persistentContainer.viewContext.save()
+            print("PersistentContainer saved")
+        } catch {
+            print("Unable to Save Changes")
+            print("\(error), \(error.localizedDescription)")
+        }
+    }
+    //Suppression données
+    func delData(){
+        let fetchReq:NSFetchRequest<Parametre> = Parametre.fetchRequest()
+        if let result = try? persistentContainer.viewContext.fetch(fetchReq){
+            for obj in result {
+                persistentContainer.viewContext.delete(obj)
+            }
+        }
+        
+        //Sauvegarde
+        do {
+            try persistentContainer.viewContext.save()
+            print("PersistentContainer saved")
+        } catch {
+            print("Unable to Save Changes")
+            print("\(error), \(error.localizedDescription)")
+        }
+    }
 
 
 }
