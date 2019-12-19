@@ -275,12 +275,16 @@
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                             <items>
                                 <navigationItem title="Title" id="vTi-uP-R9Z">
-                                    <barButtonItem key="leftBarButtonItem" systemItem="done" id="kcu-E2-Qdb">
+                                    <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="x2K-qc-BGv">
                                         <connections>
-                                            <segue destination="1QK-hw-cJZ" kind="show" identifier="Cancel" id="XIT-R6-eAE"/>
+                                            <segue destination="1QK-hw-cJZ" kind="show" identifier="Cancel" id="unq-BJ-wse"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem key="rightBarButtonItem" systemItem="add" id="x2K-qc-BGv"/>
+                                    <barButtonItem key="rightBarButtonItem" systemItem="done" id="kcu-E2-Qdb">
+                                        <connections>
+                                            <segue destination="1QK-hw-cJZ" kind="show" identifier="Done" id="XIT-R6-eAE"/>
+                                        </connections>
+                                    </barButtonItem>
                                 </navigationItem>
                             </items>
                         </navigationBar>
@@ -320,7 +324,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="KY8-ZY-B6y"/>
+        <segue reference="unq-BJ-wse"/>
         <segue reference="GHk-YL-O2m"/>
         <segue reference="Uhq-eT-it6"/>
     </inferredMetricsTieBreakers>

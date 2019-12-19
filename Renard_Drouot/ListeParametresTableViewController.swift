@@ -22,6 +22,7 @@ class ListeParametresTableViewController: UITableViewController, NSFetchedResult
     let identifiantParametreCellule = "celluleParametre"
     
     var idModele = ""
+    var idModule = ""
     
 //ViewLoad
     override func viewDidLoad() {
@@ -66,7 +67,7 @@ class ListeParametresTableViewController: UITableViewController, NSFetchedResult
                 print("Unable to Perform Fetch Request")
                 print("\(fetchError), \(fetchError.localizedDescription)")
             }
-            print("DEBUG: parametresLoad/fetch performed")
+            //print("DEBUG: parametresLoad/fetch performed")
             
         }
    
@@ -211,6 +212,20 @@ class ListeParametresTableViewController: UITableViewController, NSFetchedResult
             if let destinationVC = segue.destination as? ParametresAffichageTableViewController {
                 print("DEBUG: ListParametre/Cancel/idModele", idModele)
                 destinationVC.idModele = idModele
+                destinationVC.idModule = idModule
+            }
+        }
+        if segue.identifier == "Done" {
+            guard let indexPath = tableView.indexPathForSelectedRow else {return }
+            let parametre = fetchedResultsController.object(at: indexPath)
+            
+            if let destinationVC = segue.destination as? ParametresAffichageTableViewController {
+                print("DEBUG: ListParametre/SegueDone/idModele", idModele)
+                print("DEBUG: ListParametre/SegueDone/idModule", idModule)
+                destinationVC.idModele = idModele
+                destinationVC.idModule = idModule
+                destinationVC.hasParametre = true
+                destinationVC.param = parametre
             }
         }
         

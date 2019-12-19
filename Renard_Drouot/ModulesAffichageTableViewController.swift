@@ -24,7 +24,7 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
     
     let identifiantModuleCellule = "CelluleModuleAffichage"
     
-    var idModele:String = ""   //nom?
+    var idModele:String = ""
     
     
     override func viewDidLoad() {
@@ -43,8 +43,7 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
                 
             else {
                 //self.delData()
-                
-                //print("DEBUG: modele recup : ", self.modele.nom)
+
                 self.recupModele()
                 self.fetchResults()
                 
@@ -70,24 +69,21 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
     //Remplissage cellule
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: identifiantModuleCellule, for: indexPath)
-        let module = fetchedResultsController.object(at: indexPath)
+        let modules = fetchedResultsController.object(at: indexPath)
         
-        if (module.modele == modele) {
+        if (modules.modele == modele) {
             print("DEBUG: /module/remplissage Cellule/ modele match !")
             
             //configureCell
             configureCell(cell, at: indexPath)
         }
 
-        
-        
         return cell
     }
     
     func configureCell(_ cell: UITableViewCell, at indexPath : IndexPath){
         let module = fetchedResultsController.object(at: indexPath)
-    
-        
+
         cell.textLabel?.text = module.nom
     }
     
@@ -134,7 +130,7 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
             fetchResults()
         }
         else {
-            print("DEBUG: /newModule/fetchedObjects Failed")
+            print("DEBUG: /Module/newModule/fetchedObjects Failed")
         }
         //print("DEBUG: /Modele/NewModele/fin new Modele")
     }
@@ -160,7 +156,7 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
                     //Recuperation du module dans module
                     module = moduleParcours
                     
-                    //Fonctionnels ??
+                    
                     //Attribution du module recuperé précédement au modèle
                     modele.addToModules(module)
 
@@ -332,6 +328,7 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
             print("\(error), \(error.localizedDescription)")
         }
     }
+
 
     
     override func viewWillAppear(_ animated: Bool)
