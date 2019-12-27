@@ -18,7 +18,7 @@ class ModelesTableViewController: UITableViewController, NSFetchedResultsControl
     
     var modele = [Modele]()
     
-    private let persistentContainer = NSPersistentContainer(name: "Renard_Drouot")
+   private let persistentContainer = NSPersistentContainer(name: "Renard_Drouot")
     
     let identifiantModeleCellule = "CelluleModeleAffichage"
     
@@ -29,6 +29,8 @@ class ModelesTableViewController: UITableViewController, NSFetchedResultsControl
         titre.title = "Modèles"
         
         print("DEBUG: Modèles-------------------------------------------------")
+
+
         
         //Charge le coredata
         persistentContainer.loadPersistentStores { (persistentStoredescription, error) in

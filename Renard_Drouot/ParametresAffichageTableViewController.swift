@@ -22,7 +22,7 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
     
     var module = Module()
     
-    var param = Parametre()
+    var param:String = ""
     
     private let persistentContainer = NSPersistentContainer(name: "Renard_Drouot")
     
@@ -95,7 +95,7 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
     func fetchResults(){
         module.nom = titreTextField.text
         
-        print("DEBUG : /Parametre/fetchREsults/module.nom ", module.nom)
+        print("DEBUG : /Parametre/fetchREsults/recup TextField : module.nom ", module.nom)
         
         do {
             try self.fetchedResultsController.performFetch()
@@ -109,14 +109,14 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
     }
  
 ///Creation objet Parametre
-    func newParametre(param:Parametre) {
+    func newParametre(nomNewParametre:String) {
         //fetchResults()
         
-        print("DEBUG: /Parametre/newParametre/Avant Add, param ", param.nom)
+        print("DEBUG: /Parametre/newParametre/ param : ", nomNewParametre)
         
-        module.addToParametres(param)
-        
-        print("DEBUG: /Parametre/newParametre/Après Add")
+        //Creation du parametre
+        var newParametre = NSEntityDescription.insertNewObject(forEntityName: "Parametre", into:persistentContainer.viewContext)
+        newParametre.setValue(nomNewParametre, forKey: "nom")
     
         
         //Sauvegarde
@@ -130,10 +130,51 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
         
         //Chargement des nouvelles valeurs
         fetchResults()
-        
-        
-
     }
+    
+    
+///Association au Module
+    func associationAuModule(nomNewParametre:String)
+    {
+        fetchResults()
+        
+        ///Recuperation du nouveau parametre
+        //fecth request
+        let fetchRequestParametre: NSFetchRequest<Parametre> = Parametre.fetchRequest()
+        
+        //Recuperation des modules du persistent container
+        if let parametres = try? persistentContainer.viewContext.fetch(fetchRequestParametre){
+            var parametre:Parametre
+            print("DEBUG: /Parametre/association au Module/parametre recup ")
+            
+            //Parcours des modules pour récuperer le bon parameter
+            for parametreParcours in parametres {
+                if parametreParcours.nom == nomNewParametre {
+                    //Recuperation du module dans parametre
+                    parametre = parametreParcours
+                    
+                    print("==››DEBUG: /Parametre/association au Module/parametre recupéré ")
+                    //Attribution du module recuperé précédement au modèle
+                    module.addToParametres(parametre)
+                    
+                }
+            }
+            
+            //Sauvegarde
+            do {
+                try persistentContainer.viewContext.save()
+                print("PersistentContainer saved")
+            } catch {
+                print("Unable to Save Changes")
+                print("\(error), \(error.localizedDescription)")
+            }
+            
+            //Chargement des nouvelles valeurs
+            fetchResults()
+            
+        }
+    }
+    
     
 ///recup module
     func recupModule(){
@@ -215,9 +256,9 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "AddParametre" {
             fetchResults()
-            print("DEBUG: /Module/ segueAction/ avant passage parametre newParametre")
+            print("DEBUG: /Parametre/ segueAction/ avant passage parametre : idModule et idModele ")
             
-            if let destinationVC = segue.destination as? ListeParametresTableViewController {
+            if let destinationVC = segue.destination as? SelectionParametreViewController{
                 print("DEBUG: Parametre/segueAddParametre/idModele", idModele)
                 print("DEBUG: Parametre/segueAddParametre/idModule", idModule)
                 destinationVC.idModele = idModele
@@ -233,7 +274,7 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
             guard let indexPath = tableView.indexPathForSelectedRow else {return }
             let parametre = fetchedResultsController.object(at: indexPath)
             
-            if let destinationVC = segue.destination as? ListeParametresTableViewController {
+            if let destinationVC = segue.destination as? SelectionParametreViewController {
                 destinationVC.idModele = idModele
                 destinationVC.idModule = idModule
             }
@@ -246,7 +287,7 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
     
 ///Autres
     override func viewWillDisappear(_ animated: Bool) {
-        //print("DEBUG op : Wiew will diseappear")
+        print("DEBUG op : Wiew diseappear :")
         fetchResults()
         do {
             try persistentContainer.viewContext.save()
@@ -264,7 +305,7 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
         if (hasParametre == true) {
             hasParametre=false
             print("DEBUG op : /parametre/Appear/Parametre existant")
-            newParametre(param:param)
+            newParametre(nomNewParametre:param)
         }
         else{
             print("DEBUG : /parametre/ Appear/ parametre vide")

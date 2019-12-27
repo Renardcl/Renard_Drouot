@@ -267,7 +267,7 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
             //On l'associe au modele précédement grace a son nom "newModule"
             associationAuModele()
             
-            print("DEBUG: /Module/ segueAction/ avant passage parametre newModule : ", idModele)
+            print("DEBUG: /Module/ segueAction/ avant passage parametre nouveau module : ", idModele)
             if let destinationVC = segue.destination as? ParametresAffichageTableViewController {
                 destinationVC.idModele =  idModele
                 destinationVC.idModule = "newModule"

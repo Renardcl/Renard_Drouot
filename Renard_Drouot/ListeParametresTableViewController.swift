@@ -225,7 +225,7 @@ class ListeParametresTableViewController: UITableViewController, NSFetchedResult
                 destinationVC.idModele = idModele
                 destinationVC.idModule = idModule
                 destinationVC.hasParametre = true
-                destinationVC.param = parametre
+                //destinationVC.param = parametre
             }
         }
         
