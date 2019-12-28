@@ -24,6 +24,12 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
     
     let identifiantModuleCellule = "CelluleModuleAffichage"
     
+    /*
+     Navigation :
+     l'idObjet récupéré permet d'aller chercher cet objet dans la base et de sauvegarder les modifications faites dessus
+     le segue passe en argument le nom de l'objet sur lequel on travaille
+     la vue suivante récupère le nom de l'objet, le place dans son id et vas le chercher dans la base
+     */
     var idModele:String = ""
     
     
@@ -61,32 +67,33 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let modules = fetchedResultsController.fetchedObjects else { return 0 }
-        //print("Debug : /Modules/tableView/modules.count  : ", modules.count)
-        return modules.count
+        guard let nombreLignes = modele.modules?.count else {return 0}
+        return nombreLignes
     }
     
     //Remplissage cellule
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: identifiantModuleCellule, for: indexPath)
-        let modules = fetchedResultsController.object(at: indexPath)
         
-        if (modules.modele == modele) {
-            print("DEBUG: /module/remplissage Cellule/ modele match !")
-            
-            //configureCell
-            configureCell(cell, at: indexPath)
-        }
+        //configureCell
+        configureCell(cell, at: indexPath)
 
         return cell
     }
+
     
     func configureCell(_ cell: UITableViewCell, at indexPath : IndexPath){
-        let module = fetchedResultsController.object(at: indexPath)
 
-        cell.textLabel?.text = module.nom
+        var modules = modele.modules?.allObjects as! [Module]
+        
+        if (modules.count > 1) {
+            modules = trier(liste:modules)
+        }
+        
+        
+        cell.textLabel?.text = modules[indexPath.row].nom
     }
-    
+
     
 ///FetchResult
     func fetchResults(){
@@ -148,7 +155,7 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
         //Recuperation des modules du persistent container
         if let modules = try? persistentContainer.viewContext.fetch(fetchRequestModule){
             var module:Module
-            print("DEBUG: /Module/association au Modele/module recup ")
+            //print("DEBUG: /Module/association au Modele/module recup ")
             
             //Parcours des modules pour récuperer le bon module
             for moduleParcours in modules {
@@ -189,12 +196,15 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
         {
             for modeleParcours in modeles {
                 if modeleParcours.nom == idModele {
+                   // print("DEBUG:  /module/recupModele/ modele match :", modeleParcours.nom)
                     //Recuperation du modele
                     modele = modeleParcours
+                    
                 }
             }
         }
         else {print("DEBUG:  /module/recupModele/fetchRequest MODELE failed")}
+        
     }
 
     
@@ -246,7 +256,7 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
     
     //fonctions d'updates du controleur
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        print("DEBUG: /Module/FetchController/beginUpdates")
+       // print("DEBUG: /Module/FetchController/beginUpdates")
         tableView.beginUpdates()
     }
     
@@ -260,6 +270,8 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
     
 ///Segue functions
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        fetchResults()
+        
         if segue.identifier == "AddModule" {
             //On crée un nouveau module
             newModule()
@@ -267,9 +279,9 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
             //On l'associe au modele précédement grace a son nom "newModule"
             associationAuModele()
             
-            print("DEBUG: /Module/ segueAction/ avant passage parametre nouveau module : ", idModele)
+            print("DEBUG: /Module/ segueAction/ avant passage parametre nouveau module : ", modele.nom)
             if let destinationVC = segue.destination as? ParametresAffichageTableViewController {
-                destinationVC.idModele =  idModele
+                destinationVC.idModele =  modele.nom!
                 destinationVC.idModule = "newModule"
             }
             else{
@@ -282,11 +294,21 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
         
         if segue.identifier == "ModifyModule" {
             guard let indexPath = tableView.indexPathForSelectedRow else {return }
-            let module = fetchedResultsController.object(at: indexPath)
+            //let moduleS = fetchedResultsController.object(at: indexPath)
+            //Recuperation des modules du modele
+            var  modules = modele.modules?.allObjects as! [Module]
+            //Trie des modules pour correspondre aux index de la tableView
+            modules = trier(liste: modules)
+            //REcuperation du modele clické
+            let module = modules[indexPath.row]
+
             
             if let destinationVC = segue.destination as? ParametresAffichageTableViewController {
-                destinationVC.idModele = idModele
+                 print("DEBUG: /Module/ segueAction/ modify modele : ", modele.nom)
+                 print("DEBUG: /Module/ segueAction/ modify  module : ", module.nom)
+                destinationVC.idModele = modele.nom!
                 destinationVC.idModule = module.nom!
+                
             }
             else{
                 print("DEBUG: /Module/ segueAction/ definition du segue destination failed")
@@ -337,8 +359,25 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
         
     }
     
-    func saveContext(){
-        
+    
+    
+    func trier(liste:[Module]) ->[Module] {
+        var listeTrié:[Module] = liste
+        var tmp:Module
+        var trié:Bool = false
+        while (trié == false) {
+            trié = true
+            for j in 0...listeTrié.count-2 {
+                if listeTrié[j+1].nom! < listeTrié[j].nom! {
+                    tmp = listeTrié[j+1]
+                    listeTrié[j+1] = listeTrié[j]
+                    listeTrié[j] = tmp
+                    trié = false
+                }
+            }
+                
+        }
+        return listeTrié
     }
 
 }

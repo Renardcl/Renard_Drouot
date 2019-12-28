@@ -15,7 +15,7 @@ class ListeParametresTableViewController: UITableViewController, NSFetchedResult
 {
     @IBOutlet weak var titre: UINavigationItem!
     
-    var parametres = [Parametre]()
+   // var parametres = [Parametre]()
     
     private let persistentContainer = NSPersistentContainer(name: "Renard_Drouot")
     
@@ -23,7 +23,7 @@ class ListeParametresTableViewController: UITableViewController, NSFetchedResult
     
     var idModele = ""
     var idModule = ""
-    
+ /*
 //ViewLoad
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -251,7 +251,7 @@ class ListeParametresTableViewController: UITableViewController, NSFetchedResult
             print("\(error), \(error.localizedDescription)")
         }
     
-    }
+    }*/
 
 }
     

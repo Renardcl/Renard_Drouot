@@ -175,7 +175,7 @@ class ModelesTableViewController: UITableViewController, NSFetchedResultsControl
     
     //fonctions d'updates du controleur
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        print("DEBUG: /Modele/FetchController/WillChangeContent/beginUpdates")
+        //print("DEBUG: /Modele/FetchController/WillChangeContent/beginUpdates")
         tableView.beginUpdates()
     }
     
@@ -208,6 +208,7 @@ class ModelesTableViewController: UITableViewController, NSFetchedResultsControl
             let modele = fetchedResultsController.object(at: indexPath)
             
             if let destinationVC = segue.destination as? ModulesAffichageTableViewController {
+                //print("DEBUG : /modele / segueAction / modele.nom : ", modele.nom)
                 destinationVC.idModele = modele.nom!
             }
         }
@@ -217,8 +218,22 @@ class ModelesTableViewController: UITableViewController, NSFetchedResultsControl
 ///Autres
     //Suppression données
     func delData(){
-        let fetchReq:NSFetchRequest<Modele> = Modele.fetchRequest()
-        if let result = try? persistentContainer.viewContext.fetch(fetchReq){
+        let fetchReqModele:NSFetchRequest<Modele> = Modele.fetchRequest()
+        if let result = try? persistentContainer.viewContext.fetch(fetchReqModele){
+            for obj in result {
+                persistentContainer.viewContext.delete(obj)
+            }
+        }
+        
+        let fetchReqModule:NSFetchRequest<Module> = Module.fetchRequest()
+        if let result = try? persistentContainer.viewContext.fetch(fetchReqModule){
+            for obj in result {
+                persistentContainer.viewContext.delete(obj)
+            }
+        }
+        
+        let fetchReqParametre:NSFetchRequest<Parametre> = Parametre.fetchRequest()
+        if let result = try? persistentContainer.viewContext.fetch(fetchReqParametre){
             for obj in result {
                 persistentContainer.viewContext.delete(obj)
             }

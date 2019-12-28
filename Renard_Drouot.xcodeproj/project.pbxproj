@@ -55,6 +55,7 @@
 		6ADDF95723A77E3B0015B6D1 /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
 		6ADDF95923A784D80015B6D1 /* ListeParametresTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListeParametresTableViewController.swift; sourceTree = "<group>"; };
 		80D4F4F123B66D5500E24BFB /* SelectionParametreViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionParametreViewController.swift; sourceTree = "<group>"; };
+		80FDACA823B79DC600B26772 /* Renard_Drouot_2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Renard_Drouot_2.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -587,11 +588,13 @@
 		6ADDF92D23A77D1D0015B6D1 /* Renard_Drouot.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				80FDACA823B79DC600B26772 /* Renard_Drouot_2.xcdatamodel */,
 				6ADDF92E23A77D1D0015B6D1 /* Renard_Drouot.xcdatamodel */,
 			);
-			currentVersion = 6ADDF92E23A77D1D0015B6D1 /* Renard_Drouot.xcdatamodel */;
+			currentVersion = 80FDACA823B79DC600B26772 /* Renard_Drouot_2.xcdatamodel */;
 			path = Renard_Drouot.xcdatamodeld;
 			sourceTree = "<group>";
+			usesTabs = 0;
 			versionGroupType = wrapper.xcdatamodel;
 		};
 /* End XCVersionGroup section */

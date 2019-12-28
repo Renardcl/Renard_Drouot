@@ -15,6 +15,7 @@ class SelectionParametreViewController: UIViewController,UIPickerViewDataSource,
     private let persistentContainer = NSPersistentContainer(name: "Renard_Drouot")
     
     var idModele = ""
+    var modele:Modele = Modele()
     var idModule = ""
     
     var listParametre:[String]=["Acidité","Temperature","PH","Duree"]
@@ -51,6 +52,7 @@ class SelectionParametreViewController: UIViewController,UIPickerViewDataSource,
             if let destinationVC = segue.destination as? ParametresAffichageTableViewController {
                 print("DEBUG: ListParametre/Cancel/idModele :", idModele)
                 destinationVC.idModele = idModele
+               // destinationVC.modele = modele
                 destinationVC.idModule = idModule
             }
         }
@@ -62,6 +64,7 @@ class SelectionParametreViewController: UIViewController,UIPickerViewDataSource,
                 print("DEBUG: ListParametre/SegueDone/idModele :", idModele)
                 print("DEBUG: ListParametre/SegueDone/idModule :", idModule)
                 destinationVC.idModele = idModele
+                //destinationVC.modele = modele
                 destinationVC.idModule = idModule
                 
                 destinationVC.hasParametre = true
