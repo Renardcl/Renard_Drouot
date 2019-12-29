@@ -101,7 +101,7 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
 
 //FetchResult
     func fetchResults(){
-        module.nom = titreTextField.text
+        //module.nom = titreTextField.text
         
         
         do {
@@ -216,11 +216,16 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
                     //TODO : Modele bien récupérér car il affiche les bon module mais quand clique sur module = toujours fermentation
                     //Probleme dans recup du module quand affichage parametre
                     
-                    print("DEBUG: /parametre/recupModele/ nom : ", modeleParcours.nom)
+
                     
                     modele = modeleParcours
                 }
             }
+            
+            if (modele.nom == "") {
+                print("DEBUG: /parametre/recupModele/WARNING : modele Vide ")
+            }
+                
         }
         else {print("DEBUG:  /module/recupModele/fetchRequest MODELE failed")}
     }
@@ -298,10 +303,54 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
     }
     
 ///Segue functions
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        var disponible:Bool = true
+        
+        switch titreTextField.text {
+        //Modele nouvellement crée dont le nom doit etre changé
+        case "newModule" :
+            titreTextField.textColor = UIColor.red
+            print("DEUBG op :  /module/Segue/textField deja utilisé")
+            disponible  = false
+            break
+        //Le nom du modele n'a pas été modifié
+        case idModule:
+            titreTextField.textColor = UIColor.black
+            print("DEUBG op :  /module/Segue/textField = idModele")
+            break
+        //Le nom du modele a été modifié et nécessite une verification de disponibilité
+        default :
+            if ( verificationDisponibilitéNomModule(nom: titreTextField.text!))
+            {
+                //Le nouveau nom est disponible
+                titreTextField.textColor = UIColor.green
+                module.nom = titreTextField.text
+                print("DEUBG op :  /module/SeguetextField changé et dispo")
+                
+                //Sauvegarde
+                do {
+                    try persistentContainer.viewContext.save()
+                    print("PersistentContainer saved")
+                } catch {
+                    print("Unable to Save Changes")
+                    print("\(error), \(error.localizedDescription)")
+                }        }
+            else
+            {
+                //Le nouveau nom est indisponible
+                titreTextField.textColor = UIColor.red
+                print("DEUBG op :  /module/Segue/textField deja utilisé")
+                disponible  = false
+            }
+            break
+        }
+        return disponible
+    }
+    
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "AddParametre" {
             fetchResults()
-            print("DEBUG: /Parametre/ segueAction/ avant passage parametre : idModule et idModele ")
             
             if let destinationVC = segue.destination as? SelectionParametreViewController{
                 //print("DEBUG: Parametre/segueAddParametre/idModele", idModele)
@@ -384,7 +433,7 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
         var trié:Bool = false
         while (trié == false) {
             trié = true
-            for j in 0...listeTrié.count-2 {                    //listeTrié = 4, on va jusque j+1 donc -2
+            for j in 0...listeTrié.count-2 {                    //listeTrié = indexMax+1, on va jusque j+1 donc -2
                 if listeTrié[j+1].nom! < listeTrié[j].nom! {
                     tmp = listeTrié[j+1]
                     listeTrié[j+1] = listeTrié[j]
@@ -396,6 +445,22 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
         }
         return listeTrié
     }
+    
+    func verificationDisponibilitéNomModule(nom:String) -> Bool{
+        var estDisponible:Bool  = true
+        //Recup des modules du modele existants
+        let modules = modele.modules?.allObjects as! [Module]
+
+        for moduleParcours in modules {
+            //Si le nom entrée dans le textField est déja utilisé par un modèle
+            if moduleParcours.nom == nom {
+                // print("DEBUG:  /module/recupModele/ modele match :", modeleParcours.nom)
+                estDisponible = false
+            }
+        }
+        return estDisponible
+    }
+    
 }
 
 

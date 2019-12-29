@@ -97,7 +97,7 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
     
 ///FetchResult
     func fetchResults(){
-        modele.nom = titreTextField.text
+
         
         do {
             try self.fetchedResultsController.performFetch()
@@ -269,6 +269,50 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
     
     
 ///Segue functions
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        var disponible:Bool = true
+        
+        switch titreTextField.text {
+        //Modele nouvellement crée dont le nom doit etre changé
+        case "newModele" :
+            titreTextField.textColor = UIColor.red
+            print("DEUBG op :  /module/Segue/textField deja utilisé")
+            disponible  = false
+            break
+        //Le nom du modele n'a pas été modifié
+        case idModele:
+            titreTextField.textColor = UIColor.black
+            print("DEUBG op :  /module/Segue/textField = idModele")
+            break
+        //Le nom du modele a été modifié et nécessite une verification de disponibilité
+        default :
+            if ( verificationDisponibilitéNomModele(nom: titreTextField.text!))
+            {
+                //Le nouveau nom est disponible
+                titreTextField.textColor = UIColor.green
+                modele.nom = titreTextField.text
+                print("DEUBG op :  /module/SeguetextField changé et dispo")
+                
+                //Sauvegarde
+                do {
+                    try persistentContainer.viewContext.save()
+                    print("PersistentContainer saved")
+                } catch {
+                    print("Unable to Save Changes")
+                    print("\(error), \(error.localizedDescription)")
+                }        }
+            else
+            {
+                //Le nouveau nom est indisponible
+                titreTextField.textColor = UIColor.red
+                print("DEUBG op :  /module/Segue/textField deja utilisé")
+                disponible  = false
+            }
+            break
+        }
+            return disponible
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         fetchResults()
         
@@ -298,7 +342,9 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
             //Recuperation des modules du modele
             var  modules = modele.modules?.allObjects as! [Module]
             //Trie des modules pour correspondre aux index de la tableView
-            modules = trier(liste: modules)
+            if (modules.count > 1) {
+                modules = trier(liste:modules)
+            }
             //REcuperation du modele clické
             let module = modules[indexPath.row]
 
@@ -379,5 +425,25 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
         }
         return listeTrié
     }
-
+    
+    func verificationDisponibilitéNomModele(nom:String) -> Bool{
+        var estDisponible:Bool  = true
+        //Recup des modeles existants
+        // Création Fetch Request
+        let fetchRequestModele: NSFetchRequest<Modele> = Modele.fetchRequest()
+        
+        //Parcours des modeles pour récuperer le bon modele
+        if let modeles = try? persistentContainer.viewContext.fetch(fetchRequestModele)
+        {
+            for modeleParcours in modeles {
+                //Si le nom entrée dans le textField est déja utilisé par un modèle
+                if modeleParcours.nom == nom {
+                    // print("DEBUG:  /module/recupModele/ modele match :", modeleParcours.nom)
+                    estDisponible = false
+                }
+            }
+        }
+        else {print("DEBUG:  /module/verificationDisponibilitéNomModele/fetchRequest MODELE failed")}
+        return estDisponible
+    }
 }

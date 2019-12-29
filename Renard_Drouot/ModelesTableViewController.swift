@@ -40,7 +40,6 @@ class ModelesTableViewController: UITableViewController, NSFetchedResultsControl
             }
                 
             else {
-                
                 //self.delData()
                 
                 self.fetchResults()
