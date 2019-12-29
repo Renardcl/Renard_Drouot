@@ -15,7 +15,8 @@ class SelectionParametreViewController: UIViewController,UIPickerViewDataSource,
     private let persistentContainer = NSPersistentContainer(name: "Renard_Drouot")
     
     var idModele = ""
-    var modele:Modele = Modele()
+    var module:Module = Module()
+    var listParametreRecup:[Parametre] = [Parametre]()
     var idModule = ""
     
     var listParametre:[String]=["Acidité","Temperature","PH","Duree"]
@@ -23,6 +24,21 @@ class SelectionParametreViewController: UIViewController,UIPickerViewDataSource,
 ///ViewLoad
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("Selection-----------------from : ", idModule)
+        
+        //Charge le coredata
+        persistentContainer.loadPersistentStores { (persistentStoredescription, error) in
+            if let error = error {
+                print("Unable to Load Persistent Store")
+                print("\(error), \(error.localizedDescription)")
+            }
+                
+            else {
+               self.recupModule()
+                print("DEBUG: /Selection /  View Load / listParamtere . count : ", self.listParametreRecup.count)
+
+            }
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -43,8 +59,53 @@ class SelectionParametreViewController: UIViewController,UIPickerViewDataSource,
         return listParametre[row]
     }
     
+///Recup module
+    func recupModule() {
+        
+        // Création Fetch Request
+        let fetchRequest: NSFetchRequest<Parametre> = Parametre.fetchRequest()
+        
+        // Paramétrage Fetch Request
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "nom", ascending: true)]
+        
+        //Ajout d'un predicate pour spécifier la request
+        let premierPredicate = NSPredicate(format: "module.nom == %@", idModule)
+        //let secondPredicate = NSPredicate(format: "module.modele.nom", idModele)
+        
+        // Combiner les deux prédicats ci-dessus en un seul prédicat composé
+        //let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [premierPredicate, secondPredicate])
+        // let predicate = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType, subpredicates: [premierPredicate, secondPredicate])
+        fetchRequest.predicate = premierPredicate
+        
+        
+        // executes fetch
+        listParametreRecup = try! persistentContainer.viewContext.fetch(fetchRequest)
+    }
     
-///Segue functions
+    
+    ///Segue functions
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        var disponible:Bool = true
+        if (identifier == "Done"){
+            for parametreParcours in self.listParametreRecup {
+                if parametreParcours.module?.modele?.nom == self.idModele{
+                    print("DEBUG: Selection / ShouldPerform/ Prametre Match" + (parametreParcours.module?.modele?.nom)! + self.idModele)
+                    
+                    if (parametreParcours.nom == listParametre[ParametrePickerView.selectedRow(inComponent: 0)])
+                    {
+                        disponible = false
+                        print("DEBUG: Selection / ShouldPerform / matched / indisponible")
+                        //TODO : signaler à l'utilisateur
+                        
+                    }
+                }
+            }
+        }
+        
+        return disponible
+    }
+    
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "Cancel" {
             if let destinationVC = segue.destination as? ParametresAffichageTableViewController {

@@ -67,10 +67,10 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
             }
                 
             else {
-                self.recupModele()
+               self.recupModele()
                 self.recupModule()
                 self.fetchResults()
-
+                print("DEBUG: /Parametre / ViewLoad / fetchController, count : ", self.fetchedResultsController.fetchedObjects?.count)
             }
             //print("Debug : /Parametre/viewDidLoad/fin")
         }
@@ -156,39 +156,23 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
         ///Recuperation du nouveau parametre
         //fecth request
         let fetchRequestParametre: NSFetchRequest<Parametre> = Parametre.fetchRequest()
-        ///Recup modele
-        func recupModele() {
-            //Recup du modele passé en parametre dans le view controller
-            // Création Fetch Request
-            let fetchRequestModele: NSFetchRequest<Modele> = Modele.fetchRequest()
-            
-            //Parcours des modeles pour récuperer le bon modele
-            if let modeles = try? persistentContainer.viewContext.fetch(fetchRequestModele)
-            {
-                for modeleParcours in modeles {
-                    if modeleParcours.nom == idModele {
-                        //Recuperation du modele
-                        modele = modeleParcours
-                    }
-                }
-            }
-            else {print("DEBUG:  /module/recupModele/fetchRequest MODELE failed")}
-        }        //Recuperation des modules du persistent container
+        let predicate = NSPredicate(format: "nom == %@", "newParametre")
+        fetchRequestParametre.predicate = predicate
+        
+
         if let parametres = try? persistentContainer.viewContext.fetch(fetchRequestParametre){
-            var parametre:Parametre
-            //print("DEBUG: /Parametre/association au Module/parametre recup count: ", parametres.count)
-            
-            //Parcours des modules pour récuperer le bon parameter
-            for parametreParcours in parametres {
-                if parametreParcours.nom == "newParametre" {
-                    //Recuperation du module dans parametre
-                    parametre = parametreParcours
-                    
-                    //print("==››DEBUG: /Parametre/association au Module/parametre recupéré ")
-                    //Attribution du module recuperé précédement au modèle et set du nom
+                if (parametres.count != 1)
+                {
+                    print("DEBUG : /Parametre /  Association au Module / Erreur : newParamtre différents de 1 :", parametres.count)
+                }
+                else {
+                    //Récuperation du parametre
+                    let parametre:Parametre = parametres[0]
+                    print("DEBUG : /Parametre /  Association au Module / parametre nom : ", parametre.nom)
+                    //Setup du nouveau nom du parametre
                     parametre.nom = nomNewParametre
+                    //Setup du lien avec le module
                     module.addToParametres(parametre)
-                    
                 }
             }
             
@@ -203,8 +187,7 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
             
             //Chargement des nouvelles valeurs
             fetchResults()
-            
-        }
+        
     }
     
 ///Recup modele
@@ -212,42 +195,49 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
         //Recup du modele passé en parametre dans le view controller
         // Création Fetch Request
         let fetchRequestModele: NSFetchRequest<Modele> = Modele.fetchRequest()
+        let predicate = NSPredicate(format: "nom = %@", idModele)
+        fetchRequestModele.predicate = predicate
         
         //Parcours des modeles pour récuperer le bon modele
         if let modeles = try? persistentContainer.viewContext.fetch(fetchRequestModele)
         {
-            for modeleParcours in modeles {
-                if modeleParcours.nom == idModele {
-                    //Recuperation du modele
-                    modele = modeleParcours
-                }
+            if (modeles.count != 1) {
+                print("DEBUG: /parametre/recupModele/WARNING : nombre de modele différents de 1")
             }
-            
-            if (modele.nom == "") {
-                print("DEBUG: /parametre/recupModele/WARNING : modele Vide ")
-            }
+            else {
+                modele = modeles[0]
+                print("DEBUG: /parametre/recupModele/modele recupere : ", modele.nom)
                 
-        }
-        else {print("DEBUG:  /module/recupModele/fetchRequest MODELE failed")}
-    }
-    
-    
-///recup module
-    func recupModule(){
-        if let modules:[Module] = modele.modules?.allObjects as? [Module]
-        {
-            for moduleParcours in modules {
-                if moduleParcours.nom == idModule {
-                    //print("DEBUG : /Parametre/recupModule/moduleParcours : ", moduleParcours.nom)
-                    //print("DEBUG : /Parametre/recupModule/module : ", idModule)
-                    
-                    //Recuperation du module
-                    module = moduleParcours
-                }
             }
-            
         }
-        else {print("DEBUG:  /Parametre/recupModule/fetchRequest Parametre failed")}
+        else {print("DEBUG:  /parametre/recupModele/fetchRequest MODELE failed")}
+    }
+
+///RecupModule
+    func recupModule() {
+        
+        //Recup du modele passé en parametre dans le view controller
+        // Création Fetch Request
+        let fetchRequestModule: NSFetchRequest<Module> = Module.fetchRequest()
+        let predicate = NSPredicate(format: "nom = %@ AND modele.nom = %@", argumentArray: [idModule, idModele])
+        fetchRequestModule.predicate = predicate
+        
+        //Parcours des modeles pour récuperer le bon modele
+        if let modules = try? persistentContainer.viewContext.fetch(fetchRequestModule)
+        {
+            for moduleParcours in (modules){
+                print("DEBUG : FetchController / moduleParocurs : ",moduleParcours.nom)
+            }
+            if (modules.count != 1) {
+                print("DEBUG: /parametre/recupModule/WARNING : nombre de module différents de 1", modules.count)
+            }
+            else {
+                module = modules[0]
+                print("DEBUG: /parametre/recupModele/modele recupere : ", module.nom)
+                
+            }
+        }
+        else {print("DEBUG:  /parametre/recupModele/fetchRequest MODULE failed")}
     }
     
     
@@ -260,8 +250,8 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "nom", ascending: true)]
         
         //Ajout d'un predicate pour spécifier la request
-        let predicate = NSPredicate(format: "module.nom == %@", idModule)
-        fetchRequest.predicate = predicate
+        let predicate = NSPredicate(format: "module.nom == %@ ", idModule )
+        fetchRequest.predicate=predicate
         
         // Création Fetched Results Controller
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
@@ -316,17 +306,19 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
         var disponible:Bool = true
         
+        print("DEBUG / segue/ should / text==Field", titreTextField.text)
+        
         switch titreTextField.text {
         //Modele nouvellement crée dont le nom doit etre changé
         case "newModule" :
             titreTextField.textColor = UIColor.red
-            //print("DEUBG op :  /module/Segue/textField deja utilisé")
+            print("DEUBG op :  /module/Segue/textField deja utilisé")
             disponible  = false
             break
         //Le nom du modele n'a pas été modifié
         case idModule:
             titreTextField.textColor = UIColor.black
-           // print("DEUBG op :  /module/Segue/textField = idModele")
+           print("DEUBG op :  /module/Segue/textField = idModele")
             break
         //Le nom du modele a été modifié et nécessite une verification de disponibilité
         default :
@@ -334,8 +326,8 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
             {
                 //Le nouveau nom est disponible
                 titreTextField.textColor = UIColor.green
-                module.nom = titreTextField.text
-                //print("DEUBG op :  /module/SeguetextField changé et dispo")
+                self.module.nom = titreTextField.text
+                print("DEUBG op :  /module/SeguetextField changé et dispo")
                 
                 //Sauvegarde
                 do {
@@ -344,12 +336,14 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
                 } catch {
                     print("Unable to Save Changes")
                     print("\(error), \(error.localizedDescription)")
-                }        }
+                }
+                
+            }
             else
             {
                 //Le nouveau nom est indisponible
                 titreTextField.textColor = UIColor.red
-                //print("DEUBG op :  /module/Segue/textField deja utilisé")
+                print("DEUBG op :  /module/Segue/textField deja utilisé")
                 disponible  = false
             }
             break
@@ -359,12 +353,13 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
     
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+
         if segue.identifier == "AddParametre" {
             fetchResults()
             
             if let destinationVC = segue.destination as? SelectionParametreViewController{
-                //print("DEBUG: Parametre/segueAddParametre/idModele", idModele)
-                //print("DEBUG: Parametre/segueAddParametre/idModule", module.nom)
+                print("DEBUG: Parametre/segueAddParametre/idModele", idModele)
+                print("DEBUG: Parametre/segueAddParametre/idModule", module.nom)
                 destinationVC.idModele = modele.nom!
                 destinationVC.idModule = module.nom!
             }
@@ -420,17 +415,24 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
  
     func verificationDisponibilitéNomModule(nom:String) -> Bool{
         var estDisponible:Bool  = true
-        //Recup des modules du modele existants
-        let modules = modele.modules?.allObjects as! [Module]
-
-        for moduleParcours in modules {
-            //Si le nom entrée dans le textField est déja utilisé par un modèle
-            if moduleParcours.nom == nom {
-                // print("DEBUG:  /module/recupModele/ modele match :", modeleParcours.nom)
-                estDisponible = false
+        //Recup des modeles existants
+        // Création Fetch Request
+        let fetchRequestModule: NSFetchRequest<Module> = Module.fetchRequest()
+        
+        //Parcours des modeles pour récuperer le bon modele
+        if let modules = try? persistentContainer.viewContext.fetch(fetchRequestModule)
+        {
+            for moduleParcours in modules {
+                //Si le nom entrée dans le textField est déja utilisé par un modèle
+                if moduleParcours.nom == nom {
+                    // print("DEBUG:  /module/recupModele/ modele match :", modeleParcours.nom)
+                    estDisponible = false
+                }
             }
         }
+        else {print("DEBUG:  /parametre/verificationDisponibilitéNomModele/fetchRequest MODELE failed")}
         return estDisponible
+        
     }
     
 }
