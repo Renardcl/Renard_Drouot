@@ -9,12 +9,11 @@
 import UIKit
 import CoreData
 
-class ModulesAffichageTableViewController: UITableViewController, NSFetchedResultsControllerDelegate {
+class ModulesAffichageTableViewController: UITableViewController, NSFetchedResultsControllerDelegate, YourCellDelegate {
 
     @IBOutlet weak var titre: UINavigationItem!
     @IBOutlet weak var AddButton: UIBarButtonItem!
     @IBOutlet weak var titreTextField: UITextField!
-    
     
     var module = [Module]()
     
@@ -33,11 +32,23 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
     var idModele:String = ""
     
     
+    //SUPPRIMER : Action du bouton supprimer
+    func didPressButton(cell:CelluleTableViewCell) {
+        let indexPath = tableView.indexPath(for: cell)
+        // print("DEBUG : /Module / didPressButton / index path  :", indexPath?.row)
+        
+        let module = fetchedResultsController.object(at: indexPath!)
+        
+        // print("DEBUG : /Module / didPressButton / modele : ", module.nom)
+        module.managedObjectContext?.delete(module)
+    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         titreTextField.text = idModele
-        print("DEBUG: /module/ViewLoad/idModele-----------------", idModele)
+        print("Modules----------------- from :", idModele)
 
         
         //Charge le coredata
@@ -48,11 +59,9 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
             }
                 
             else {
-                //self.delData()
-
                 self.recupModele()
                 self.fetchResults()
-                
+
             }
             //print("Debug : /viewDidLoad/fin")
         }
@@ -62,43 +71,37 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
     
 ///tableView functions
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let nombreLignes = modele.modules?.count else {return 0}
+        guard let nombreLignes = fetchedResultsController.fetchedObjects?.count else {return 0}
         return nombreLignes
     }
     
     //Remplissage cellule
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: identifiantModuleCellule, for: indexPath)
-        
-        //configureCell
-        configureCell(cell, at: indexPath)
-
-        return cell
-    }
-
-    
-    func configureCell(_ cell: UITableViewCell, at indexPath : IndexPath){
-
-        var modules = modele.modules?.allObjects as! [Module]
-        
-        if (modules.count > 1) {
-            modules = trier(liste:modules)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: identifiantModuleCellule, for: indexPath)  as? CelluleTableViewCell else
+        {
+            print("DEBUG : /Module/Cellule/ cellule de mauvais type")
+            //On return un truc de base
+            return UITableViewCell()
         }
         
+        let module = fetchedResultsController.object(at: indexPath)
         
-        cell.textLabel?.text = modules[indexPath.row].nom
+        //intialisaiton cellule
+        cell.cellDelegate = self
+        
+        //configuration cellule
+        cell.configure(cell, at: indexPath, module:module)
+        
+        return cell
     }
 
     
 ///FetchResult
     func fetchResults(){
-
-        
         do {
             try self.fetchedResultsController.performFetch()
         } catch {
@@ -106,7 +109,6 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
             print("Unable to Perform Fetch Request")
             print("\(fetchError), \(fetchError.localizedDescription)")
         }
-
         //print("DEBUG: /Modules/fetchResult/fetch performed")
         
     }
@@ -206,7 +208,7 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
         else {print("DEBUG:  /module/recupModele/fetchRequest MODELE failed")}
         
     }
-
+    
     
     
     
@@ -217,6 +219,10 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
         
         // Paramétrage Fetch Request
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "nom", ascending: true)]
+        
+        //Ajout d'un predicate pour spécifier la request
+        let predicate = NSPredicate(format: "modele.nom == %@", idModele)
+        fetchRequest.predicate = predicate
         
         // Création Fetched Results Controller
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
@@ -241,10 +247,14 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
         case .update :
             if let indexPath = indexPath, let cell = tableView.cellForRow(at: indexPath){
                 print("DEBUG : /Module/FetchController/ UPDATE")
-                configureCell(cell,at : indexPath)
+                let module = fetchedResultsController.object(at: indexPath)
+                cell.textLabel?.text = module.nom
             }
         case .delete :
-            print("DEBUG : /ModUle/FetchController/ DELETE")
+            print("DEBUG : /Module/FetchController/ DELETE : indexPath :", indexPath?.row)
+                if let indexPath = indexPath{
+                tableView.deleteRows(at: [indexPath], with: .fade)
+            }
         
         default :
          print("DEBUG : /Module/FetchController/ DEFAULT")
@@ -253,18 +263,16 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
     }
     
     
-    
     //fonctions d'updates du controleur
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-       // print("DEBUG: /Module/FetchController/beginUpdates")
+        //print("DEBUG: /Module/FetchController/beginUpdates")
         tableView.beginUpdates()
     }
     
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-       // print("DEBUG: /Module/FetchController/endUpdates")
+        //print("DEBUG: /Module/FetchController/endUpdates")
         tableView.endUpdates()
-        
     }
     
     
@@ -282,7 +290,6 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
         //Le nom du modele n'a pas été modifié
         case idModele:
             titreTextField.textColor = UIColor.black
-            print("DEUBG op :  /module/Segue/textField = idModele")
             break
         //Le nom du modele a été modifié et nécessite une verification de disponibilité
         default :
@@ -291,7 +298,6 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
                 //Le nouveau nom est disponible
                 titreTextField.textColor = UIColor.green
                 modele.nom = titreTextField.text
-                print("DEUBG op :  /module/SeguetextField changé et dispo")
                 
                 //Sauvegarde
                 do {
@@ -305,7 +311,6 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
             {
                 //Le nouveau nom est indisponible
                 titreTextField.textColor = UIColor.red
-                print("DEUBG op :  /module/Segue/textField deja utilisé")
                 disponible  = false
             }
             break
@@ -338,20 +343,14 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
         
         if segue.identifier == "ModifyModule" {
             guard let indexPath = tableView.indexPathForSelectedRow else {return }
-            //let moduleS = fetchedResultsController.object(at: indexPath)
-            //Recuperation des modules du modele
-            var  modules = modele.modules?.allObjects as! [Module]
-            //Trie des modules pour correspondre aux index de la tableView
-            if (modules.count > 1) {
-                modules = trier(liste:modules)
-            }
-            //REcuperation du modele clické
-            let module = modules[indexPath.row]
+
+            
+            let module = fetchedResultsController.object(at: indexPath)
 
             
             if let destinationVC = segue.destination as? ParametresAffichageTableViewController {
-                 print("DEBUG: /Module/ segueAction/ modify modele : ", modele.nom)
-                 print("DEBUG: /Module/ segueAction/ modify  module : ", module.nom)
+                 //print("DEBUG: /Module/ segueAction/ modify modele : ", modele.nom)
+                 //print("DEBUG: /Module/ segueAction/ modify  module : ", module.nom)
                 destinationVC.idModele = modele.nom!
                 destinationVC.idModule = module.nom!
                 
@@ -376,26 +375,6 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
             print("\(error), \(error.localizedDescription)")
         }
     }
-    
-
-    //Suppression données
-    func delData(){
-        let fetchReq:NSFetchRequest<Module> = Module.fetchRequest()
-        if let result = try? persistentContainer.viewContext.fetch(fetchReq){
-            for obj in result {
-                persistentContainer.viewContext.delete(obj)
-            }
-        }
-        
-        //Sauvegarde
-        do {
-            try persistentContainer.viewContext.save()
-            print("PersistentContainer saved")
-        } catch {
-            print("Unable to Save Changes")
-            print("\(error), \(error.localizedDescription)")
-        }
-    }
 
 
     
@@ -403,27 +382,6 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
     {
         fetchResults()
         
-    }
-    
-    
-    
-    func trier(liste:[Module]) ->[Module] {
-        var listeTrié:[Module] = liste
-        var tmp:Module
-        var trié:Bool = false
-        while (trié == false) {
-            trié = true
-            for j in 0...listeTrié.count-2 {
-                if listeTrié[j+1].nom! < listeTrié[j].nom! {
-                    tmp = listeTrié[j+1]
-                    listeTrié[j+1] = listeTrié[j]
-                    listeTrié[j] = tmp
-                    trié = false
-                }
-            }
-                
-        }
-        return listeTrié
     }
     
     func verificationDisponibilitéNomModele(nom:String) -> Bool{

@@ -23,8 +23,6 @@ class SelectionParametreViewController: UIViewController,UIPickerViewDataSource,
 ///ViewLoad
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("DEUBG: /SelectionParametre / ViewLoad / idModele :", idModele)
-        print("DEUBG: /SelectionParametre / ViewLoad / idModule :", idModule)
     }
 
     override func didReceiveMemoryWarning() {
@@ -50,7 +48,7 @@ class SelectionParametreViewController: UIViewController,UIPickerViewDataSource,
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "Cancel" {
             if let destinationVC = segue.destination as? ParametresAffichageTableViewController {
-                print("DEBUG: ListParametre/Cancel/idModele :", idModele)
+                //print("DEBUG: SelectionParametree/Cancel/idModele :", idModele)
                 destinationVC.idModele = idModele
                // destinationVC.modele = modele
                 destinationVC.idModule = idModule
@@ -61,14 +59,14 @@ class SelectionParametreViewController: UIViewController,UIPickerViewDataSource,
             //let parametre = fetchedResultsController.object(at: indexPath)
             
             if let destinationVC = segue.destination as? ParametresAffichageTableViewController {
-                print("DEBUG: ListParametre/SegueDone/idModele :", idModele)
-                print("DEBUG: ListParametre/SegueDone/idModule :", idModule)
+                //print("DEBUG: SelectionParametre/SegueDone/idModele :", idModele)
+                //print("DEBUG: SelectionParametre/SegueDone/idModule :", idModule)
                 destinationVC.idModele = idModele
                 //destinationVC.modele = modele
                 destinationVC.idModule = idModule
                 
                 destinationVC.hasParametre = true
-                print("DEBUG: ListParametre/SegueDone/parametre du pickerView :", listParametre[ParametrePickerView.selectedRow(inComponent: 0)])
+                //print("DEBUG: SelectionParametre/SegueDone/parametre du pickerView :", listParametre[ParametrePickerView.selectedRow(inComponent: 0)])
                 destinationVC.param = listParametre[ParametrePickerView.selectedRow(inComponent: 0)]
             }
         }

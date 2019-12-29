@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 
 
-class ParametresAffichageTableViewController: UITableViewController, NSFetchedResultsControllerDelegate{
+class ParametresAffichageTableViewController: UITableViewController, NSFetchedResultsControllerDelegate, YourCellDelegate{
 
 
     @IBOutlet weak var AddButton: UIBarButtonItem!
@@ -40,12 +40,24 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
     var modele = Modele()
     var hasParametre:Bool = false
     
+
+    //SUPPRIMER : Action du bouton supprimer
+    func didPressButton(cell:CelluleTableViewCell) {
+        let indexPath = tableView.indexPath(for: cell)
+        // print("DEBUG : /Module / didPressButton / index path  :", indexPath?.row)
+        
+        let parametre = fetchedResultsController.object(at: indexPath!)
+        
+        // print("DEBUG : /Module / didPressButton / modele : ", module.nom)
+        parametre.managedObjectContext?.delete(parametre)
+    }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         titreTextField.text = idModule
-        print("DEBUG: /Parametre/ViewLoad/idModule-----------------", idModule)
+        print("Paramètres-----------------from : ", idModule)
         
         //Charge le coredata
         persistentContainer.loadPersistentStores { (persistentStoredescription, error) in
@@ -55,7 +67,6 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
             }
                 
             else {
-                //self.delData()
                 self.recupModele()
                 self.recupModule()
                 self.fetchResults()
@@ -69,41 +80,37 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
 
 //tableView functions
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let nombreLignes = module.parametres?.count else {return 0}
+        guard let nombreLignes = fetchedResultsController.fetchedObjects?.count  else {return 0}
         return nombreLignes
     }
     
     //Remplissage cellule
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: identifiantParametreCellule, for: indexPath)
-
-        configureCell(cell, at: indexPath)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: identifiantParametreCellule, for: indexPath)  as? CelluleTableViewCell else
+        {
+            print("DEBUG : /Parametre/Cellule/ cellule de mauvais type")
+            //On return un truc de base
+            return UITableViewCell()
+        }
+        let parametre = fetchedResultsController.object(at: indexPath)
+        
+        //intialisaiton cellule
+        cell.cellDelegate = self
+        
+        //configuration cellule
+        cell.configure(cell, at: indexPath, parametre:parametre)
+        
         
         return cell
-    }
-    
-    func configureCell(_ cell: UITableViewCell, at indexPath : IndexPath){
-        
-        var parametres = module.parametres?.allObjects as! [Parametre]
-        
-        if (parametres.count  > 1) {
-            parametres = trier(liste:parametres)
-        }
-        
-        cell.textLabel?.text = parametres[indexPath.row].nom
     }
     
 
 //FetchResult
     func fetchResults(){
-        //module.nom = titreTextField.text
-        
-        
         do {
             try self.fetchedResultsController.performFetch()
         } catch {
@@ -169,7 +176,7 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
         }        //Recuperation des modules du persistent container
         if let parametres = try? persistentContainer.viewContext.fetch(fetchRequestParametre){
             var parametre:Parametre
-            print("DEBUG: /Parametre/association au Module/parametre recup count: ", parametres.count)
+            //print("DEBUG: /Parametre/association au Module/parametre recup count: ", parametres.count)
             
             //Parcours des modules pour récuperer le bon parameter
             for parametreParcours in parametres {
@@ -177,7 +184,7 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
                     //Recuperation du module dans parametre
                     parametre = parametreParcours
                     
-                    print("==››DEBUG: /Parametre/association au Module/parametre recupéré ")
+                    //print("==››DEBUG: /Parametre/association au Module/parametre recupéré ")
                     //Attribution du module recuperé précédement au modèle et set du nom
                     parametre.nom = nomNewParametre
                     module.addToParametres(parametre)
@@ -212,12 +219,6 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
             for modeleParcours in modeles {
                 if modeleParcours.nom == idModele {
                     //Recuperation du modele
-                    
-                    //TODO : Modele bien récupérér car il affiche les bon module mais quand clique sur module = toujours fermentation
-                    //Probleme dans recup du module quand affichage parametre
-                    
-
-                    
                     modele = modeleParcours
                 }
             }
@@ -258,6 +259,10 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
         // Paramétrage Fetch Request
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "nom", ascending: true)]
         
+        //Ajout d'un predicate pour spécifier la request
+        let predicate = NSPredicate(format: "module.nom == %@", idModule)
+        fetchRequest.predicate = predicate
+        
         // Création Fetched Results Controller
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
         
@@ -280,9 +285,14 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
         case .update :
             if let indexPath = indexPath, let cell = tableView.cellForRow(at: indexPath){
                 print("DEBUG : /Parametre/FetchController/ UPDATE")
-                configureCell(cell,at : indexPath)
+                let parametre = fetchedResultsController.object(at: indexPath)
+                cell.textLabel?.text = parametre.nom
             }
         case .delete :
+            print("DEBUG : /Module/FetchController/ DELETE : indexPath :", indexPath?.row)
+            if let indexPath = indexPath{
+                tableView.deleteRows(at: [indexPath], with: .fade)
+            }
             print("DEBUG : /ModUle/FetchController/ DELETE")
         default :
             print("DEBUG : /Parametre/FetchController/ DEFAULT")
@@ -310,13 +320,13 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
         //Modele nouvellement crée dont le nom doit etre changé
         case "newModule" :
             titreTextField.textColor = UIColor.red
-            print("DEUBG op :  /module/Segue/textField deja utilisé")
+            //print("DEUBG op :  /module/Segue/textField deja utilisé")
             disponible  = false
             break
         //Le nom du modele n'a pas été modifié
         case idModule:
             titreTextField.textColor = UIColor.black
-            print("DEUBG op :  /module/Segue/textField = idModele")
+           // print("DEUBG op :  /module/Segue/textField = idModele")
             break
         //Le nom du modele a été modifié et nécessite une verification de disponibilité
         default :
@@ -325,7 +335,7 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
                 //Le nouveau nom est disponible
                 titreTextField.textColor = UIColor.green
                 module.nom = titreTextField.text
-                print("DEUBG op :  /module/SeguetextField changé et dispo")
+                //print("DEUBG op :  /module/SeguetextField changé et dispo")
                 
                 //Sauvegarde
                 do {
@@ -339,7 +349,7 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
             {
                 //Le nouveau nom est indisponible
                 titreTextField.textColor = UIColor.red
-                print("DEUBG op :  /module/Segue/textField deja utilisé")
+                //print("DEUBG op :  /module/Segue/textField deja utilisé")
                 disponible  = false
             }
             break
@@ -398,54 +408,16 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
         
         if (hasParametre == true) {
             hasParametre=false
-            print("DEBUG op : /parametre/Appear/Parametre existant")
+           // print("DEBUG op : /parametre/Appear/Parametre existant")
             newParametre(nomNewParametre:param)
             associationAuModule(nomNewParametre: param)
         }
-        else{
-            print("DEBUG : /parametre/ Appear/ parametre vide")
-        }
+
         
-    }
-    
-    //Suppression données
-    func delData(){
-        let fetchReq:NSFetchRequest<Parametre> = Parametre.fetchRequest()
-        if let result = try? persistentContainer.viewContext.fetch(fetchReq){
-            for obj in result {
-                persistentContainer.viewContext.delete(obj)
-            }
-        }
-        
-        //Sauvegarde
-        do {
-            try persistentContainer.viewContext.save()
-            print("PersistentContainer saved")
-        } catch {
-            print("Unable to Save Changes")
-            print("\(error), \(error.localizedDescription)")
-        }
     }
 
-    func trier(liste:[Parametre]) ->[Parametre] {
-        var listeTrié:[Parametre] = liste   //paramtre est en let : lecture seule
-        var tmp:Parametre
-        var trié:Bool = false
-        while (trié == false) {
-            trié = true
-            for j in 0...listeTrié.count-2 {                    //listeTrié = indexMax+1, on va jusque j+1 donc -2
-                if listeTrié[j+1].nom! < listeTrié[j].nom! {
-                    tmp = listeTrié[j+1]
-                    listeTrié[j+1] = listeTrié[j]
-                    listeTrié[j] = tmp
-                    trié = false
-                }
-            }
-            
-        }
-        return listeTrié
-    }
-    
+
+ 
     func verificationDisponibilitéNomModule(nom:String) -> Bool{
         var estDisponible:Bool  = true
         //Recup des modules du modele existants

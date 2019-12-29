@@ -9,7 +9,17 @@
 import UIKit
 import CoreData
 
-class ModelesTableViewController: UITableViewController, NSFetchedResultsControllerDelegate {
+class ModelesTableViewController: UITableViewController, NSFetchedResultsControllerDelegate, YourCellDelegate {
+    
+    func didPressButton(cell:CelluleTableViewCell) {
+        let indexPath = tableView.indexPath(for: cell)
+        //print("DEBUG : /Modele / didPressButton / index path  :", indexPath?.row)
+        let modele = fetchedResultsController.object(at: indexPath!)
+        //print("DEBUG : /Modele / didPressButton / modele : ", modele.nom)
+        modele.managedObjectContext?.delete(modele)
+    }
+    
+
 
     @IBOutlet weak var AddButton: UIBarButtonItem!
 
@@ -28,7 +38,7 @@ class ModelesTableViewController: UITableViewController, NSFetchedResultsControl
         
         titre.title = "Modèles"
         
-        print("DEBUG: Modèles-------------------------------------------------")
+        print("Modèles-------------------------------------------------")
 
 
         
@@ -114,21 +124,23 @@ class ModelesTableViewController: UITableViewController, NSFetchedResultsControl
     
     //Remplissage cellule
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: identifiantModeleCellule, for: indexPath)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: identifiantModeleCellule, for: indexPath)  as? CelluleTableViewCell else
+        {
+            print("DEBUG : /Modele/Cellule/ cellule de mauvais type")
+            //On return un truc de base
+            return UITableViewCell()
+        }
         
         
-        //configureCell
-        configureCell(cell, at: indexPath)
+        let modele = fetchedResultsController.object(at: indexPath)
+        
+        cell.cellDelegate = self
+        
+        cell.configure(cell, at: indexPath, modele:modele)
+        
         
         return cell
     }
-    
-    func configureCell(_ cell: UITableViewCell, at indexPath : IndexPath){
-        let modele = fetchedResultsController.object(at: indexPath)
-        cell.textLabel?.text = modele.nom
-    }
-    
-    
     
     
 ///FetchedController
@@ -161,9 +173,14 @@ class ModelesTableViewController: UITableViewController, NSFetchedResultsControl
         case .update :
             if let indexPath = indexPath, let cell = tableView.cellForRow(at: indexPath){
                 print("DEBUG : /Modele/FetchController/ UPDATE")
-                configureCell(cell,at : indexPath)
+                let modele = fetchedResultsController.object(at: indexPath)
+                cell.textLabel?.text = modele.nom
             }
         case .delete :
+            if let indexPath = indexPath{
+                tableView.deleteRows(at: [indexPath], with: .fade)
+                
+            }
             print("DEBUG : /Modele/FetchController/ DELETE")
         default :
             print("DEBUG : /Modele/FetchController/ DEFAULT")
@@ -214,6 +231,7 @@ class ModelesTableViewController: UITableViewController, NSFetchedResultsControl
         
     }
     
+
 ///Autres
     //Suppression données
     func delData(){
@@ -254,8 +272,20 @@ class ModelesTableViewController: UITableViewController, NSFetchedResultsControl
         fetchResults()
 
     }
+    override func viewWillDisappear(_ animated: Bool) {
+        //print("DEBUG op : Wiew will diseappear")
+        fetchResults()
+        do {
+            try persistentContainer.viewContext.save()
+            print("PersistentContainer saved")
+        } catch {
+            print("Unable to Save Changes")
+            print("\(error), \(error.localizedDescription)")
+        }
+    }
 
 
 }
+
 
 
