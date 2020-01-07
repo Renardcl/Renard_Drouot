@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 
 protocol UtilisationCellDelegate : class {
-    //func didPressButton(cell : CelluleTableViewCell)
+    func textFieldChanged(cell : UtilisationModeleTableViewCell)
 }
 
 class UtilisationModeleTableViewCell: UITableViewCell {
@@ -21,6 +21,13 @@ class UtilisationModeleTableViewCell: UITableViewCell {
     
     @IBOutlet weak var TheoriqueTextField: UITextField!
     
+    @IBAction func TheoriqueDidChange(_ sender: UITextField) {
+        print("DEBUG :  Theorique Changed  ---------------------------")
+        cellDelegate?.textFieldChanged(cell: self)
+        
+    }
+    
+    
     @IBOutlet weak var ReelTextField: UITextField!
     
     
@@ -28,11 +35,14 @@ class UtilisationModeleTableViewCell: UITableViewCell {
     func configure(_ cell: UITableViewCell, at indexPath : IndexPath, parametre:Parametre){
         
         cellLabel.text = parametre.nom
+        TheoriqueTextField.text = parametre.theorique
+        
     }
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        TheoriqueTextField.addTarget(self, action: #selector(UtilisationModeleTableViewCell.TheoriqueDidChange(_:)),
+                            for: .editingChanged)
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

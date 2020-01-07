@@ -11,7 +11,38 @@ import CoreData
 
 class UtilisationModeleTableViewController: UITableViewController , NSFetchedResultsControllerDelegate, UtilisationCellDelegate {
 
+    func textFieldChanged(cell : UtilisationModeleTableViewCell) {
+        let indexPath = tableView.indexPath(for: cell)
+        // print("DEBUG : /Module / didPressButton / index path  :", indexPath?.row)
+        
+        let moduleChanged = listModules[(indexPath?.section)!]
 
+        //Recup du modele passé en parametre dans le view controller
+        // Création Fetch Request
+        let fetchRequestParametre: NSFetchRequest<Parametre> = Parametre.fetchRequest()
+        let predicate = NSPredicate(format: "module.nom = %@",  moduleChanged.nom!)
+        fetchRequestParametre.predicate = predicate
+        
+        //Parcours des modeles pour récuperer le bon modele
+        if let listParametrefetched = try? persistentContainer.viewContext.fetch(fetchRequestParametre) as [Parametre]
+        {
+            listParametrefetched[(indexPath?.row)!].theorique = cell.textLabel?.text
+        }
+        else {print("DEBUG:  /UT-Modele / TextFieldChanged / fetchRequest MODULE failed")}
+        
+        
+        //Save -> non fonctionnel
+        do {
+            try persistentContainer.viewContext.save()
+            print("PersistentContainer saved")
+        } catch {
+            print("Unable to Save Changes")
+            print("\(error), \(error.localizedDescription)")
+        }
+        fetchResults()
+        
+    }
+    
     
     @IBOutlet weak var titre: UINavigationItem!
     
@@ -20,6 +51,14 @@ class UtilisationModeleTableViewController: UITableViewController , NSFetchedRes
     var listModules:[Module] = [Module]()
     var parametre = Parametre()
     var listParametres:[Parametre] = [Parametre]()
+
+    
+    @IBOutlet weak var ValiderButton: UIBarButtonItem!
+    @IBAction func ValiderActionButton(_ sender: Any) {
+        //TODO : enregistrer textField en BDD
+        //Inutile pour l'instant
+    }
+    
     
     private let persistentContainer = NSPersistentContainer(name: "Renard_Drouot")
     
@@ -48,8 +87,6 @@ class UtilisationModeleTableViewController: UITableViewController , NSFetchedRes
                 self.recupModule()
             
             }
-            
-            
         }
         
     }
@@ -80,8 +117,8 @@ class UtilisationModeleTableViewController: UITableViewController , NSFetchedRes
         //Header Title
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         print("DEBUG /UT-Modele/tableView/SectionHeaderTitle : " ,section)
-        
-        return listModules[section].nom
+        let fullHeader:String = listModules[section].nom! + "                  Théorique     Reel"  //TODO remplacer par une View
+        return fullHeader
         
     }
     
@@ -161,7 +198,7 @@ class UtilisationModeleTableViewController: UITableViewController , NSFetchedRes
         
     }
 
-    ///RecupModule      TODO : verifier bon fonctionnement
+///Recup Module
     func recupModule() {
         
         //Recup du modele passé en parametre dans le view controller
@@ -267,8 +304,21 @@ class UtilisationModeleTableViewController: UITableViewController , NSFetchedRes
         }
         
         return parametresFetched
+    }
+    
+///Segue functions  //TODO
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 
-        
+        if segue.identifier == "UseModele" {
+            guard let indexPath = tableView.indexPathForSelectedRow else {return }
+            let modele = fetchedResultsController.object(at: indexPath)
+            
+            if let destinationVC = segue.destination as? UtilisationModeleTableViewController
+            {
+                //print("DEBUG : /modele / segueAction / modele.nom : ", modele.nom)
+                destinationVC.idModele = modele.nom!
+            }
+        }
     }
     
     
