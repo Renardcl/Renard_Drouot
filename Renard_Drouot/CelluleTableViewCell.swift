@@ -50,8 +50,5 @@ class CelluleTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
-    func getCell() ->UITableViewCell{
-        return self
-    }
 
 }

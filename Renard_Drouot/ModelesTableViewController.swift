@@ -228,7 +228,16 @@ class ModelesTableViewController: UITableViewController, NSFetchedResultsControl
                 destinationVC.idModele = modele.nom!
             }
         }
-        
+        if segue.identifier == "UseModele" {
+            guard let indexPath = tableView.indexPathForSelectedRow else {return }
+            let modele = fetchedResultsController.object(at: indexPath)
+            
+            if let destinationVC = segue.destination as? UtilisationModeleTableViewController
+            {
+                //print("DEBUG : /modele / segueAction / modele.nom : ", modele.nom)
+                destinationVC.idModele = modele.nom!
+            }
+        }
     }
     
 

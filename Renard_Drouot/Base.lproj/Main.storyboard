@@ -32,7 +32,7 @@
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <state key="normal" title="Utiliser"/>
                                 <connections>
-                                    <segue destination="gz3-ya-n42" kind="show" id="gsT-Yq-V5X"/>
+                                    <segue destination="v8q-uh-cUC" kind="show" id="cRP-05-hnz"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -44,6 +44,125 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="436" y="124.58770614692655"/>
+        </scene>
+        <!--Modeles Table View Controller-->
+        <scene sceneID="3ha-tW-pkT">
+            <objects>
+                <tableViewController id="v8q-uh-cUC" customClass="ModelesTableViewController" customModule="Renard_Drouot" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="s7X-AM-uUE">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <navigationBar key="tableHeaderView" contentMode="scaleToFill" id="VpN-b0-u66">
+                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                            <items>
+                                <navigationItem title="Title" id="9J6-7E-wev">
+                                    <barButtonItem key="leftBarButtonItem" title="Retour" id="GUa-Sh-q6U">
+                                        <connections>
+                                            <segue destination="BYZ-38-t0r" kind="show" id="XSq-N8-S6h"/>
+                                        </connections>
+                                    </barButtonItem>
+                                </navigationItem>
+                            </items>
+                        </navigationBar>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="CelluleModeleAffichage" id="Gjd-oP-E0Z" customClass="CelluleTableViewCell" customModule="Renard_Drouot" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="72" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Gjd-oP-E0Z" id="851-nC-1Qb">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="gpq-sf-BlZ" kind="show" identifier="UseModele" id="LbH-5q-MBb"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="v8q-uh-cUC" id="4yW-Jb-iY6"/>
+                            <outlet property="delegate" destination="v8q-uh-cUC" id="J6x-UE-7zt"/>
+                        </connections>
+                    </tableView>
+                    <connections>
+                        <outlet property="titre" destination="9J6-7E-wev" id="yQQ-nU-R6h"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Oes-ye-pa9" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1394" y="-965"/>
+        </scene>
+        <!--Utilisation Modele Table View Controller-->
+        <scene sceneID="MkM-4r-nfd">
+            <objects>
+                <tableViewController id="gpq-sf-BlZ" customClass="UtilisationModeleTableViewController" customModule="Renard_Drouot" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="UsX-fB-ppF" customClass="UtilisationModeleTableView" customModule="Renard_Drouot" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <navigationBar key="tableHeaderView" contentMode="scaleToFill" id="ZoV-Ww-crH">
+                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                            <items>
+                                <navigationItem title="Title" id="DOs-lC-4bF">
+                                    <barButtonItem key="leftBarButtonItem" title="Retour" id="h74-9v-sFu">
+                                        <connections>
+                                            <segue destination="v8q-uh-cUC" kind="show" id="1P1-Yz-x05"/>
+                                        </connections>
+                                    </barButtonItem>
+                                </navigationItem>
+                            </items>
+                        </navigationBar>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="CelluleUtilisationModeleAffichage" id="nnZ-LJ-M3k" customClass="UtilisationModeleTableViewCell" customModule="Renard_Drouot" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="72" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="nnZ-LJ-M3k" id="nMo-fa-VUD">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="CJG-mo-b1r">
+                                            <rect key="frame" x="262" y="6" width="97" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <nil key="textColor"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <textInputTraits key="textInputTraits"/>
+                                        </textField>
+                                        <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="VkD-eL-Ife">
+                                            <rect key="frame" x="139" y="6" width="97" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <nil key="textColor"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <textInputTraits key="textInputTraits"/>
+                                        </textField>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zOH-ee-klY">
+                                            <rect key="frame" x="31" y="11" width="42" height="21"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="ReelTextField" destination="CJG-mo-b1r" id="La1-N1-xFK"/>
+                                    <outlet property="TheoriqueTextField" destination="VkD-eL-Ife" id="34X-kH-IAq"/>
+                                    <outlet property="cellLabel" destination="zOH-ee-klY" id="LP5-DW-sE0"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="gpq-sf-BlZ" id="1gZ-aS-s0q"/>
+                            <outlet property="delegate" destination="gpq-sf-BlZ" id="mDZ-jA-uzX"/>
+                        </connections>
+                    </tableView>
+                    <connections>
+                        <outlet property="titre" destination="DOs-lC-4bF" id="fqK-BY-xpP"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="jar-2j-1cg" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2311" y="-966"/>
         </scene>
         <!--Modeles Table View Controller-->
         <scene sceneID="Vh3-qQ-eTh">
@@ -116,21 +235,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RHI-VH-xh2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1430" y="142"/>
-        </scene>
-        <!--View Controller-->
-        <scene sceneID="Fp3-8f-0Up">
-            <objects>
-                <viewController id="gz3-ya-n42" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="ynJ-Fg-ZDG">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <viewLayoutGuide key="safeArea" id="4nA-n2-HN9"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="fIK-HF-AzZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1260" y="-687"/>
         </scene>
         <!--Modules Affichage Table View Controller-->
         <scene sceneID="HUe-WI-TBv">
@@ -224,7 +328,7 @@
                                             <segue destination="E4D-WK-Hy4" kind="show" identifier="Cancel" id="GHk-YL-O2m"/>
                                         </connections>
                                     </barButtonItem>
-                                    <textField key="titleView" opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" id="mO5-op-pqU">
+                                    <textField key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" id="mO5-op-pqU">
                                         <rect key="frame" x="175" y="7" width="25" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <nil key="textColor"/>
@@ -378,7 +482,9 @@
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="gul-Mc-Ta2"/>
-        <segue reference="GHk-YL-O2m"/>
+        <segue reference="Wcw-dT-Kh3"/>
         <segue reference="Uhq-eT-it6"/>
+        <segue reference="1P1-Yz-x05"/>
+        <segue reference="XSq-N8-S6h"/>
     </inferredMetricsTieBreakers>
 </document>
