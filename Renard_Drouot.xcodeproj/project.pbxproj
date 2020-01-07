@@ -19,7 +19,6 @@
 		6ADDF95823A77E3B0015B6D1 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ADDF95723A77E3B0015B6D1 /* MenuViewController.swift */; };
 		6ADDF95A23A784D80015B6D1 /* ListeParametresTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ADDF95923A784D80015B6D1 /* ListeParametresTableViewController.swift */; };
 		80CD118A23C3B4C900DC0246 /* UtilisationModeleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80CD118923C3B4C900DC0246 /* UtilisationModeleTableViewCell.swift */; };
-		80CD119823C3C06A00DC0246 /* ModeleObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80CD119723C3C06A00DC0246 /* ModeleObject.swift */; };
 		80D4F4F223B66D5500E24BFB /* SelectionParametreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80D4F4F123B66D5500E24BFB /* SelectionParametreViewController.swift */; };
 		80DD88D923B8D0EB00F3503C /* CelluleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80DD88D823B8D0EB00F3503C /* CelluleTableViewCell.swift */; };
 		80DD88DD23C3AEFE00F3503C /* UtilisationModeleTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80DD88DC23C3AEFE00F3503C /* UtilisationModeleTableViewController.swift */; };
@@ -59,7 +58,6 @@
 		6ADDF95723A77E3B0015B6D1 /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
 		6ADDF95923A784D80015B6D1 /* ListeParametresTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListeParametresTableViewController.swift; sourceTree = "<group>"; };
 		80CD118923C3B4C900DC0246 /* UtilisationModeleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtilisationModeleTableViewCell.swift; sourceTree = "<group>"; };
-		80CD119723C3C06A00DC0246 /* ModeleObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModeleObject.swift; sourceTree = "<group>"; };
 		80D4F4F123B66D5500E24BFB /* SelectionParametreViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionParametreViewController.swift; sourceTree = "<group>"; };
 		80DD88D823B8D0EB00F3503C /* CelluleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CelluleTableViewCell.swift; sourceTree = "<group>"; };
 		80DD88DC23C3AEFE00F3503C /* UtilisationModeleTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtilisationModeleTableViewController.swift; sourceTree = "<group>"; };
@@ -119,7 +117,6 @@
 				6ADDF93223A77D1F0015B6D1 /* LaunchScreen.storyboard */,
 				6ADDF93523A77D1F0015B6D1 /* Info.plist */,
 				6ADDF95723A77E3B0015B6D1 /* MenuViewController.swift */,
-				80CD119723C3C06A00DC0246 /* ModeleObject.swift */,
 				6ADDF92D23A77D1D0015B6D1 /* Renard_Drouot.xcdatamodeld */,
 				6ADDF95923A784D80015B6D1 /* ListeParametresTableViewController.swift */,
 				80D4F4F123B66D5500E24BFB /* SelectionParametreViewController.swift */,
@@ -271,7 +268,6 @@
 				80D4F4F223B66D5500E24BFB /* SelectionParametreViewController.swift in Sources */,
 				6ADDF92F23A77D1D0015B6D1 /* Renard_Drouot.xcdatamodeld in Sources */,
 				6ADDF92923A77D1D0015B6D1 /* ViewController.swift in Sources */,
-				80CD119823C3C06A00DC0246 /* ModeleObject.swift in Sources */,
 				6ADDF92723A77D1D0015B6D1 /* AppDelegate.swift in Sources */,
 				80DD88D923B8D0EB00F3503C /* CelluleTableViewCell.swift in Sources */,
 				6ADDF95A23A784D80015B6D1 /* ListeParametresTableViewController.swift in Sources */,
