@@ -11,12 +11,20 @@ import CoreData
 
 class UtilisationModeleTableViewController: UITableViewController , NSFetchedResultsControllerDelegate, UtilisationCellDelegate {
 
+    //Outlets
+    @IBOutlet weak var titre: UINavigationItem!
+    @IBOutlet weak var ValiderButton: UIBarButtonItem!
+    @IBAction func ValiderActionButton(_ sender: Any) {
+        //TODO : enregistrer textField en BDD
+        //Inutile pour l'instant
+    }
+    
     func textFieldChanged(cell : UtilisationModeleTableViewCell, reel:Bool) {
         let indexPath = tableView.indexPath(for: cell)
         // print("DEBUG : /Module / didPressButton / index path  :", indexPath?.row)
         
         let moduleChanged = listModules[(indexPath?.section)!]
-
+        
         //Recup du modele passé en parametre dans le view controller
         // Création Fetch Request
         let fetchRequestParametre: NSFetchRequest<Parametre> = Parametre.fetchRequest()
@@ -36,77 +44,49 @@ class UtilisationModeleTableViewController: UITableViewController , NSFetchedRes
         }
         else {print("DEBUG:  /UT-Modele / TextFieldChanged / fetchRequest MODULE failed")}
         
-        //Save
-        do {
-            try persistentContainer.viewContext.save()
-            print("PersistentContainer saved")
-        } catch {
-            print("Unable to Save Changes")
-            print("\(error), \(error.localizedDescription)")
-        }
-        
+        saveContext()
     }
     
-    
-    @IBOutlet weak var titre: UINavigationItem!
-    
+    //Variables permettant de manipuler les objets
     var modele = Modele()
     var module = Module()
-    var listModules:[Module] = [Module]()
     var parametre = Parametre()
+    var listModules:[Module] = [Module]()
     var listParametres:[Parametre] = [Parametre]()
-
     
-    @IBOutlet weak var ValiderButton: UIBarButtonItem!
-    @IBAction func ValiderActionButton(_ sender: Any) {
-        //TODO : enregistrer textField en BDD
-        //Inutile pour l'instant
-    }
-    
-    
+    //PersistentContainer
     private let persistentContainer = NSPersistentContainer(name: "Renard_Drouot")
     
+    //identifiant Cellule
     let identifiantUtilisationModeleCellule = "CelluleUtilisationModeleAffichage"  
     
+    //Navigation
     var idModele:String = ""
     
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         print("Utilisation Modèles-------------------------------------------------")
+        
         titre.title = idModele
         
-        
-        //Charge le coredata
+        //Chargement du coredata
         persistentContainer.loadPersistentStores { (persistentStoredescription, error) in
             if let error = error {
-                print("Unable to Load Persistent Store")
+                print("ERROR : Unable to Load Persistent Store")
                 print("\(error), \(error.localizedDescription)")
             }
                 
             else {
                 self.fetchResults()
+                
+                //Recuperation du modèle et du module passé en paramètre
                 self.initModele()
                 self.recupModule()
-            
             }
         }
-        
-    }
- 
-    
-///FetchResult
-    func fetchResults(){
-        do {
-            try self.fetchedResultsController.performFetch()
-        } catch {
-            let fetchError = error as NSError
-            print("Unable to Perform Fetch Request")
-            print("\(fetchError), \(fetchError.localizedDescription)")
-        }
-        //print("DEBUG: /Modules/fetchResult/fetch performed")
-        
     }
     
     
@@ -119,12 +99,11 @@ class UtilisationModeleTableViewController: UITableViewController , NSFetchedRes
     
         //Header Title
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        //print("DEBUG /UT-Modele/tableView/SectionHeaderTitle : " ,section)
+        ///print("DEBUG /UT-Modele/tableView/SectionHeaderTitle : " ,section)
         let fullHeader:String = listModules[section].nom! + "                  Théorique     Reel"  //TODO remplacer par une View
         return fullHeader
         
     }
-    
     /*override func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let vw = UIView()
         vw.backgroundColor = UIColor.red
@@ -132,14 +111,12 @@ class UtilisationModeleTableViewController: UITableViewController , NSFetchedRes
         return vw
     }*/
     
-    
         //Header Height
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 20.0
         
     }
     
-
     //Ligne
         //Nombre
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -150,52 +127,46 @@ class UtilisationModeleTableViewController: UITableViewController , NSFetchedRes
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: identifiantUtilisationModeleCellule, for: indexPath)  as? UtilisationModeleTableViewCell else
         {
-            print("DEBUG : /Module/Cellule/ cellule de mauvais type")
+            print("WARNING : /UT-Modele / Cellule/ cellule de mauvais type")
             //On return un truc de base
             return UITableViewCell()
         }
         
+        //Recuperation du parametre a écrire
         let module = listModules[indexPath.section]
         let parametres:[Parametre] = fetchParametresFromModule(idModule: module.nom!)
 
-         //intialisaiton cellule
+         //Utilisation d'un protocol Delegate pour la configuration de la cellule
          cell.cellDelegate = self
-         
-         //configuration cellule
-        cell.configure(cell, at: indexPath, parametre:parametres[indexPath.row])
+         cell.configure(cell, at: indexPath, parametre:parametres[indexPath.row])
         
         return cell
     }
     
     
-    
-    
-    
-///Recup modele
+///Récuperation du modèle passé en paramètre
     func initModele() {
         //Recup du modele passé en parametre dans le view controller
         // Création Fetch Request
-        
         if let modeles = fetchedResultsController.fetchedObjects
         {
             if (modeles.count > 1) {print("WARNING : Modele recupéré superieur a 1")}
             for modeleParcours in modeles
             {
                 if modeleParcours.nom == idModele {
-                    // print("DEBUG:  /module/recupModele/ modele match :", modeleParcours.nom)
+                    ///print("DEBUG:  /module/recupModele/ modele match :", modeleParcours.nom)
+                    
                     //Recuperation du modele
                     modele = modeleParcours
-                    
                 }
             }
         }
-        else {print("DEBUG:  /UT-modele/recupModele/fetchRequest MODELE failed")}
-        
+        else {print("ERROR :  /UT-modele/recupModele/fetchRequest MODELE failed")}
     }
 
-///Recup Module
+    
+///Récuperation des modules passé en paramètre
     func recupModule() {
-        
         //Recup du modele passé en parametre dans le view controller
         // Création Fetch Request
         let fetchRequestModule: NSFetchRequest<Module> = Module.fetchRequest()
@@ -205,20 +176,15 @@ class UtilisationModeleTableViewController: UITableViewController , NSFetchedRes
         //Parcours des modeles pour récuperer le bon modele
         if let listModulesfetched = try? persistentContainer.viewContext.fetch(fetchRequestModule)
         {
-            //DEBUG : Affichage
-            for moduleParcours in (listModulesfetched){
-                //print("DEBUG : FetchController / moduleParocurs : ",moduleParcours.nom)
-            }
-            if (listModules.count != 1) {
-                //print("DEBUG: /UT-Modele/recupModule/Nombre de modules recuprere : ", listModules.count)
-            }
+            //if (listModules.count != 1) {print("DEBUG: /UT-Modele/recupModule/Nombre de modules recuprere : ",listModules.count)}
             listModules = listModulesfetched
         }
-        else {print("DEBUG:  /UT-Modele/recupModule/fetchRequest MODULE failed")}
+        else {print("ERROR:  /UT-Modele/recupModule/fetchRequest MODULE failed")}
     }
     
     
 ///FetchedController
+    //Definition du FetchController : Request / Predicate / Instanciation / delegate
     fileprivate lazy var fetchedResultsController: NSFetchedResultsController<Modele> = {
         // Création Fetch Request
         let fetchRequest: NSFetchRequest<Modele> = Modele.fetchRequest()
@@ -240,7 +206,18 @@ class UtilisationModeleTableViewController: UITableViewController , NSFetchedRes
     }()
     
     
+///FetchResult
+    func fetchResults(){
+        do {
+            try self.fetchedResultsController.performFetch()
+        } catch {
+            let fetchError = error as NSError
+            print("ERROR : Unable to Perform Fetch Request")
+            print("\(fetchError), \(fetchError.localizedDescription)")
+        }
+    }
     
+    //Fonctions CRUD du Controller
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
         
         switch(type){
@@ -248,14 +225,15 @@ class UtilisationModeleTableViewController: UITableViewController , NSFetchedRes
             if let indexPath = newIndexPath {
                 tableView.insertRows(at: [indexPath], with: .fade)
             }
-            print("DEBUG : /UT-Modele/FetchController/ INSERT")
+            ///print("DEBUG : /UT-Modele/FetchController/ INSERT")
             break
+            
         case .update :
             if let indexPath = indexPath, let cell = tableView.cellForRow(at: indexPath){
-                print("DEBUG : /UT-Modele/FetchController/ UPDATE")
                 let module = fetchedResultsController.object(at: indexPath)
                 cell.textLabel?.text = module.nom
             }
+            ///print("DEBUG : /UT-Modele/FetchController/ UPDATE")
             
         default :
             print("DEBUG : /UT-Modele/FetchController/ DEFAULT")
@@ -270,49 +248,59 @@ class UtilisationModeleTableViewController: UITableViewController , NSFetchedRes
         tableView.beginUpdates()
     }
     
-    
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         //print("DEBUG: /Module/FetchController/endUpdates")
         tableView.endUpdates()
     }
     
+    //Récupération des parametre d'un module spécifique
     func fetchParametresFromModule(idModule:String) -> [Parametre]{
         // Création Fetch Request
         let fetchRequest: NSFetchRequest<Parametre> = Parametre.fetchRequest()
-    
-        // Paramétrage Fetch Request
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "nom", ascending: true)]
-    
-        //Ajout d'un predicate pour spécifier la request
         let predicate = NSPredicate(format: "module.nom == %@ ", idModule)
         fetchRequest.predicate=predicate
     
         guard let parametresFetched = try? persistentContainer.viewContext.fetch(fetchRequest) else
         {
-            print("DEBUG : /UT-Modele / FetchParametres / ERROR : fetchParametes from module")
+            ///print("DEBUG : /UT-Modele / FetchParametres /  fetchParametes from module")
             return [Parametre]()
         }
         
-        if (parametresFetched.count != 1)
-        {
-            //print("DEBUG : /UT-Modele / FetchParametres /  Nombre de parameter :", parametresFetched.count)
-        }
+        //if (parametresFetched.count != 1) {print("DEBUG : /UT-Modele / FetchParametres /  Nombre de parameter :", parametresFetched.count)}
         
         return parametresFetched
     }
     
 ///Segue functions
+    //Passage d'argument dans les segue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 
+
         if segue.identifier == "UseModele" {
+            //Récupération du modèle sur lequel on a cliqué
             guard let indexPath = tableView.indexPathForSelectedRow else {return }
             let modele = fetchedResultsController.object(at: indexPath)
-            
+
+            //Arguement : nom du modèle
             if let destinationVC = segue.destination as? UtilisationModeleTableViewController
             {
-                //print("DEBUG : /modele / segueAction / modele.nom : ", modele.nom)
+                ///print("DEBUG : /modele / segueAction / modele.nom : ", modele.nom)
                 destinationVC.idModele = modele.nom!
             }
+        }
+    }
+    
+///Autres
+    //Fonction de sauvegarde
+    func saveContext()
+    {
+        do {
+            try persistentContainer.viewContext.save()
+            print("PersistentContainer saved")
+        } catch {
+            print("Unable to Save Changes")
+            print("\(error), \(error.localizedDescription)")
         }
     }
 }

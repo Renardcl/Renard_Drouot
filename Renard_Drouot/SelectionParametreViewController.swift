@@ -10,33 +10,41 @@ import UIKit
 import CoreData
 
 class SelectionParametreViewController: UIViewController,UIPickerViewDataSource, UIPickerViewDelegate {
+    
+    //Outlets
     @IBOutlet weak var ParametrePickerView: UIPickerView!
     
-    private let persistentContainer = NSPersistentContainer(name: "Renard_Drouot")
-    
-    var idModele = ""
+    //Variables de manipulation d'objets
     var module:Module = Module()
-    var listParametreRecup:[Parametre] = [Parametre]()
+    var listParametresFromModule:[Parametre] = [Parametre]()
+    
+    //Navigation
+    var idModele = ""
     var idModule = ""
     
+    //PersistentContainer
+    private let persistentContainer = NSPersistentContainer(name: "Renard_Drouot")
+    
+    //Liste de paramètres prédéfinies
     var listParametre:[String]=["Acidité","Temperature","PH","Duree"]
    
-///ViewLoad
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("Selection-----------------from : ", idModule)
         
-        //Charge le coredata
+        print("Selection-----------------")
+        
+        //Chargement du coredata
         persistentContainer.loadPersistentStores { (persistentStoredescription, error) in
             if let error = error {
-                print("Unable to Load Persistent Store")
+                print("ERROR : Unable to Load Persistent Store")
                 print("\(error), \(error.localizedDescription)")
             }
                 
             else {
-               self.recupModule()
-                print("DEBUG: /Selection /  View Load / listParamtere . count : ", self.listParametreRecup.count)
-
+                //Recuperation du module passé en paramètre
+                self.recupModule()
+                /// print("DEBUG: /Selection /  View Load / listParamtere . count : ", self.listParametreRecup.count)
             }
         }
     }
@@ -59,81 +67,71 @@ class SelectionParametreViewController: UIViewController,UIPickerViewDataSource,
         return listParametre[row]
     }
     
-///Recup module
+///Récuperation du module passé en paramètre
     func recupModule() {
         
         // Création Fetch Request
         let fetchRequest: NSFetchRequest<Parametre> = Parametre.fetchRequest()
-        
-        // Paramétrage Fetch Request
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "nom", ascending: true)]
+        let predicate = NSPredicate(format: "module.nom == %@", idModule)
+        fetchRequest.predicate = predicate
         
-        //Ajout d'un predicate pour spécifier la request
-        let premierPredicate = NSPredicate(format: "module.nom == %@", idModule)
-        //let secondPredicate = NSPredicate(format: "module.modele.nom", idModele)
-        
-        // Combiner les deux prédicats ci-dessus en un seul prédicat composé
-        //let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [premierPredicate, secondPredicate])
-        // let predicate = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType, subpredicates: [premierPredicate, secondPredicate])
-        fetchRequest.predicate = premierPredicate
-        
-        
-        // executes fetch
-        listParametreRecup = try! persistentContainer.viewContext.fetch(fetchRequest)
+        //Execution du fetch
+        listParametresFromModule = try! persistentContainer.viewContext.fetch(fetchRequest)
     }
     
     
-    ///Segue functions
+///Segue functions
+    //Controles a effectué avant de pouvoir effectuer le Segue
+        //Test d'existence du paramètre dans le module
+        //TODO : Message à l'utilisateur
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
         var disponible:Bool = true
+        
+        //Si l'utilisateur a fait un choix de nouveau paramètre, on verifie qu'il n'existe pas déja dans le module
         if (identifier == "Done"){
-            for parametreParcours in self.listParametreRecup {
+            for parametreParcours in self.listParametresFromModule {
                 if parametreParcours.module?.modele?.nom == self.idModele{
-                    print("DEBUG: Selection / ShouldPerform/ Prametre Match" + (parametreParcours.module?.modele?.nom)! + self.idModele)
+                    ///print("DEBUG: Selection / ShouldPerform/ Prametre Match" + (parametreParcours.module?.modele?.nom)! + self.idModele)
                     
                     if (parametreParcours.nom == listParametre[ParametrePickerView.selectedRow(inComponent: 0)])
                     {
                         disponible = false
-                        print("DEBUG: Selection / ShouldPerform / matched / indisponible")
+                        print("WARNING: Selection / ShouldPerform / matched / indisponible")
                         //TODO : signaler à l'utilisateur
                         
                     }
                 }
             }
         }
-        
         return disponible
     }
     
-    
+    //Passage d'argument dans les segue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
         if segue.identifier == "Cancel" {
-            if let destinationVC = segue.destination as? ParametresAffichageTableViewController {
-                //print("DEBUG: SelectionParametree/Cancel/idModele :", idModele)
-                destinationVC.idModele = idModele
-               // destinationVC.modele = modele
-                destinationVC.idModule = idModule
-            }
-        }
-        if segue.identifier == "Done" {
-            //guard let indexPath = tableView.indexPathForSelectedRow else {return }
-            //let parametre = fetchedResultsController.object(at: indexPath)
             
+            //Argument : nom du modèle + nom du module
             if let destinationVC = segue.destination as? ParametresAffichageTableViewController {
-                //print("DEBUG: SelectionParametre/SegueDone/idModele :", idModele)
-                //print("DEBUG: SelectionParametre/SegueDone/idModule :", idModule)
+                ///print("DEBUG: SelectionParametree/Cancel/idModele :", idModele)
                 destinationVC.idModele = idModele
-                //destinationVC.modele = modele
                 destinationVC.idModule = idModule
-                
-                destinationVC.hasParametre = true
-                //print("DEBUG: SelectionParametre/SegueDone/parametre du pickerView :", listParametre[ParametrePickerView.selectedRow(inComponent: 0)])
-                destinationVC.param = listParametre[ParametrePickerView.selectedRow(inComponent: 0)]
             }
         }
         
+        if segue.identifier == "Done" {
+            
+            //Arguement : nom du modèle + nom du module + parametre + hasParametre=true
+            if let destinationVC = segue.destination as? ParametresAffichageTableViewController {
+                ///print("DEBUG: SelectionParametre/SegueDone/idModele :", idModele)
+                ///print("DEBUG: SelectionParametre/SegueDone/idModule :", idModule)
+                destinationVC.idModele = idModele
+                destinationVC.idModule = idModule
+                
+                destinationVC.hasParametre = true
+                destinationVC.param = listParametre[ParametrePickerView.selectedRow(inComponent: 0)]
+            }
+        }
     }
-    
-    
-
 }

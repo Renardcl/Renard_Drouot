@@ -9,17 +9,21 @@
 import UIKit
 import CoreData
 
+//Protcole implémenté par Les Vues de la fonction Paramétrer pour permettre la suppression d'éléments
 protocol YourCellDelegate : class {
+    //Envoi une référence sur la cellule pour effectuer la suppression
     func didPressButton(cell : CelluleTableViewCell)
 }
 
 class CelluleTableViewCell: UITableViewCell {
     
+    //Implémente le protocole
     var cellDelegate: YourCellDelegate?
     
+    //Outlets
     @IBOutlet weak var DeleteButton: UIButton!
-    
     @IBAction func buttonPressed(_ sender: UIButton) {
+        //Appelle la fonction du protocole pour la suppression
         cellDelegate?.didPressButton(cell : self)
     }
     
