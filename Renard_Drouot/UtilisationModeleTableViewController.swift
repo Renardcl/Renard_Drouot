@@ -2,7 +2,7 @@
 //  UtilisationModeleTableViewController.swift
 //  Renard_Drouot
 //
-//  Created by YGGTorrent on 06/01/2020.
+//  Created by Clément Renard on 06/01/2020.
 //  Copyright © 2020 RENARD Clement. All rights reserved.
 //
 
@@ -11,7 +11,7 @@ import CoreData
 
 class UtilisationModeleTableViewController: UITableViewController , NSFetchedResultsControllerDelegate, UtilisationCellDelegate {
 
-    func textFieldChanged(cell : UtilisationModeleTableViewCell) {
+    func textFieldChanged(cell : UtilisationModeleTableViewCell, reel:Bool) {
         let indexPath = tableView.indexPath(for: cell)
         // print("DEBUG : /Module / didPressButton / index path  :", indexPath?.row)
         
@@ -26,12 +26,17 @@ class UtilisationModeleTableViewController: UITableViewController , NSFetchedRes
         //Parcours des modeles pour récuperer le bon modele
         if let listParametrefetched = try? persistentContainer.viewContext.fetch(fetchRequestParametre) as [Parametre]
         {
-            listParametrefetched[(indexPath?.row)!].theorique = cell.textLabel?.text
+            if (reel == false) {
+                listParametrefetched[(indexPath?.row)!].theorique = cell.TheoriqueTextField.text
+            }
+            else {
+                listParametrefetched[(indexPath?.row)!].reel = cell.ReelTextField.text
+                
+            }
         }
         else {print("DEBUG:  /UT-Modele / TextFieldChanged / fetchRequest MODULE failed")}
         
-        
-        //Save -> non fonctionnel
+        //Save
         do {
             try persistentContainer.viewContext.save()
             print("PersistentContainer saved")
@@ -39,7 +44,6 @@ class UtilisationModeleTableViewController: UITableViewController , NSFetchedRes
             print("Unable to Save Changes")
             print("\(error), \(error.localizedDescription)")
         }
-        fetchResults()
         
     }
     
@@ -110,13 +114,12 @@ class UtilisationModeleTableViewController: UITableViewController , NSFetchedRes
     //Section
         //Nombre
     override func numberOfSections(in tableView: UITableView) -> Int {
-        print("DEBUG /UT-Modele/tableView/SectionNbr modele.modules.count : ", (modele.modules?.count)!)
         return (modele.modules?.count)!
     }
     
         //Header Title
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        print("DEBUG /UT-Modele/tableView/SectionHeaderTitle : " ,section)
+        //print("DEBUG /UT-Modele/tableView/SectionHeaderTitle : " ,section)
         let fullHeader:String = listModules[section].nom! + "                  Théorique     Reel"  //TODO remplacer par une View
         return fullHeader
         
@@ -132,10 +135,6 @@ class UtilisationModeleTableViewController: UITableViewController , NSFetchedRes
     
         //Header Height
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        /*var title = self.tableView(tableView, titleForHeaderInSection: section)
-         if (title == "") {
-         return 0.0
-         }*/
         return 20.0
         
     }
@@ -144,8 +143,6 @@ class UtilisationModeleTableViewController: UITableViewController , NSFetchedRes
     //Ligne
         //Nombre
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print("DEBUG UT-Modele/tableView/SectionNbrLigne : ", section)
-        print("DEBUG UT-Modele/tableView/nombre de parametre : ", listModules[section].parametres?.count)
         return (listModules[section].parametres?.count)!
     }
     
@@ -158,11 +155,9 @@ class UtilisationModeleTableViewController: UITableViewController , NSFetchedRes
             return UITableViewCell()
         }
         
-        print("DEBUG : /UT-Modele/tableView/Cellule/ REmplissage indexPAth.section : ", indexPath.section)
-        
         let module = listModules[indexPath.section]
         let parametres:[Parametre] = fetchParametresFromModule(idModule: module.nom!)
-         
+
          //intialisaiton cellule
          cell.cellDelegate = self
          
@@ -212,10 +207,10 @@ class UtilisationModeleTableViewController: UITableViewController , NSFetchedRes
         {
             //DEBUG : Affichage
             for moduleParcours in (listModulesfetched){
-                print("DEBUG : FetchController / moduleParocurs : ",moduleParcours.nom)
+                //print("DEBUG : FetchController / moduleParocurs : ",moduleParcours.nom)
             }
             if (listModules.count != 1) {
-                print("DEBUG: /UT-Modele/recupModule/Nombre de modules recuprere : ", listModules.count)
+                //print("DEBUG: /UT-Modele/recupModule/Nombre de modules recuprere : ", listModules.count)
             }
             listModules = listModulesfetched
         }
@@ -300,13 +295,13 @@ class UtilisationModeleTableViewController: UITableViewController , NSFetchedRes
         
         if (parametresFetched.count != 1)
         {
-            print("DEBUG : /UT-Modele / FetchParametres /  Nombre de parameter :", parametresFetched.count)
+            //print("DEBUG : /UT-Modele / FetchParametres /  Nombre de parameter :", parametresFetched.count)
         }
         
         return parametresFetched
     }
     
-///Segue functions  //TODO
+///Segue functions
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 
         if segue.identifier == "UseModele" {
@@ -320,7 +315,4 @@ class UtilisationModeleTableViewController: UITableViewController , NSFetchedRes
             }
         }
     }
-    
-    
-    
 }

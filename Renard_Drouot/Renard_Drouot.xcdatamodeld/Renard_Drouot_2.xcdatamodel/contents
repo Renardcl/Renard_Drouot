@@ -11,13 +11,13 @@
     </entity>
     <entity name="Parametre" representedClassName="Parametre" syncable="YES" codeGenerationType="class">
         <attribute name="nom" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="objectif" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="reel" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="theorique" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="module" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Module" inverseName="parametres" inverseEntity="Module" syncable="YES"/>
     </entity>
     <elements>
         <element name="Modele" positionX="-167.9921875" positionY="-89.19921875" width="128" height="75"/>
         <element name="Module" positionX="7.9921875" positionY="-88" width="131.75" height="88"/>
-        <element name="Parametre" positionX="223" positionY="-99" width="128" height="103"/>
+        <element name="Parametre" positionX="223" positionY="-99" width="128" height="105"/>
     </elements>
 </model>
