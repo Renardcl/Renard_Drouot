@@ -11,7 +11,6 @@
 		6A8816D023A8C67A006872EF /* ParametresAffichageTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8816CF23A8C67A006872EF /* ParametresAffichageTableViewController.swift */; };
 		6A8816D223A8CF7A006872EF /* ModulesAffichageTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8816D123A8CF7A006872EF /* ModulesAffichageTableViewController.swift */; };
 		6ADDF92723A77D1D0015B6D1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ADDF92623A77D1D0015B6D1 /* AppDelegate.swift */; };
-		6ADDF92923A77D1D0015B6D1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ADDF92823A77D1D0015B6D1 /* ViewController.swift */; };
 		6ADDF92C23A77D1D0015B6D1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6ADDF92A23A77D1D0015B6D1 /* Main.storyboard */; };
 		6ADDF92F23A77D1D0015B6D1 /* Renard_Drouot.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6ADDF92D23A77D1D0015B6D1 /* Renard_Drouot.xcdatamodeld */; };
 		6ADDF93123A77D1F0015B6D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6ADDF93023A77D1F0015B6D1 /* Assets.xcassets */; };
@@ -47,7 +46,6 @@
 		6A8816D123A8CF7A006872EF /* ModulesAffichageTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModulesAffichageTableViewController.swift; sourceTree = "<group>"; };
 		6ADDF92323A77D1D0015B6D1 /* Renard_Drouot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Renard_Drouot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6ADDF92623A77D1D0015B6D1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		6ADDF92823A77D1D0015B6D1 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		6ADDF92B23A77D1D0015B6D1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		6ADDF92E23A77D1D0015B6D1 /* Renard_Drouot.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Renard_Drouot.xcdatamodel; sourceTree = "<group>"; };
 		6ADDF93023A77D1F0015B6D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -111,7 +109,6 @@
 			isa = PBXGroup;
 			children = (
 				6ADDF92623A77D1D0015B6D1 /* AppDelegate.swift */,
-				6ADDF92823A77D1D0015B6D1 /* ViewController.swift */,
 				6ADDF92A23A77D1D0015B6D1 /* Main.storyboard */,
 				6ADDF93023A77D1F0015B6D1 /* Assets.xcassets */,
 				6ADDF93223A77D1F0015B6D1 /* LaunchScreen.storyboard */,
@@ -267,7 +264,6 @@
 				6A8816D023A8C67A006872EF /* ParametresAffichageTableViewController.swift in Sources */,
 				80D4F4F223B66D5500E24BFB /* SelectionParametreViewController.swift in Sources */,
 				6ADDF92F23A77D1D0015B6D1 /* Renard_Drouot.xcdatamodeld in Sources */,
-				6ADDF92923A77D1D0015B6D1 /* ViewController.swift in Sources */,
 				6ADDF92723A77D1D0015B6D1 /* AppDelegate.swift in Sources */,
 				80DD88D923B8D0EB00F3503C /* CelluleTableViewCell.swift in Sources */,
 				6ADDF95A23A784D80015B6D1 /* ListeParametresTableViewController.swift in Sources */,
