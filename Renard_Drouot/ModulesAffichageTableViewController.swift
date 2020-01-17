@@ -48,7 +48,6 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
         super.viewDidLoad()
         
         print("Modules-----------------")
-
         titreTextField.text = idModele
         
         //Chargement du coredata
@@ -65,7 +64,6 @@ class ModulesAffichageTableViewController: UITableViewController, NSFetchedResul
             }
         }
     }
- 
     
 ///tableView functions
     override func numberOfSections(in tableView: UITableView) -> Int {

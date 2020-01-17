@@ -11,8 +11,6 @@ import CoreData
 
 class ModelesTableViewController: UITableViewController, NSFetchedResultsControllerDelegate, YourCellDelegate {
     
-
-    
     //Outlets
     @IBOutlet weak var AddButton: UIBarButtonItem!    
     @IBOutlet weak var titre: UINavigationItem!

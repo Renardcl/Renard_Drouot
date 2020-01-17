@@ -27,6 +27,7 @@ class CelluleTableViewCell: UITableViewCell {
         cellDelegate?.didPressButton(cell : self)
     }
     
+    
     //Configuration d'une cellule Modele
     func configure(_ cell: UITableViewCell, at indexPath : IndexPath, modele:Modele){
         cell.textLabel?.text = modele.nom
@@ -53,6 +54,4 @@ class CelluleTableViewCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
-    
-
 }

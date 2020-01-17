@@ -172,7 +172,7 @@ class ParametresAffichageTableViewController: UITableViewController, NSFetchedRe
         else {print("ERROR:  /parametre/recupModele/fetchRequest MODELE failed")}
     }
 
-///Récupération du module pasé en paramètre
+///Récupération du module passé en paramètre
     func recupModule() {
         //Recup du modele passé en parametre dans le view controller
         // Création Fetch Request
