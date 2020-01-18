@@ -139,7 +139,7 @@ FeuilleFab</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Oes-ye-pa9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1394" y="-965"/>
+            <point key="canvasLocation" x="1902" y="-618"/>
         </scene>
         <!--Utilisation Modele Table View Controller-->
         <scene sceneID="MkM-4r-nfd">
@@ -231,7 +231,7 @@ FeuilleFab</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jar-2j-1cg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2309.5999999999999" y="-966.56671664167925"/>
+            <point key="canvasLocation" x="2674" y="-617"/>
         </scene>
         <!--Modeles Table View Controller-->
         <scene sceneID="Vh3-qQ-eTh">
@@ -373,7 +373,7 @@ FeuilleFab</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RIl-fc-LY6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1055" y="889"/>
+            <point key="canvasLocation" x="436" y="-653"/>
         </scene>
         <!--Modules Affichage Table View Controller-->
         <scene sceneID="HUe-WI-TBv">
@@ -640,10 +640,6 @@ FeuilleFab</string>
                                 </tableViewCellContentView>
                             </tableViewCell>
                         </prototypes>
-                        <connections>
-                            <outlet property="dataSource" destination="jxm-cM-YYX" id="RjE-fU-e9f"/>
-                            <outlet property="delegate" destination="jxm-cM-YYX" id="Wad-3J-gS5"/>
-                        </connections>
                     </tableView>
                     <toolbarItems/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
@@ -653,14 +649,14 @@ FeuilleFab</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OTO-ZO-iVc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3516" y="-874"/>
+            <point key="canvasLocation" x="4841" y="-1249"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="KY8-ZY-B6y"/>
         <segue reference="GHk-YL-O2m"/>
         <segue reference="qHr-9Z-ivw"/>
-        <segue reference="cRP-05-hnz"/>
-        <segue reference="CdB-X5-OSN"/>
+        <segue reference="1P1-Yz-x05"/>
+        <segue reference="XSq-N8-S6h"/>
     </inferredMetricsTieBreakers>
 </document>

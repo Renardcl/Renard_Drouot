@@ -15,8 +15,6 @@ class UtilisationModeleTableViewController: UITableViewController , NSFetchedRes
     @IBOutlet weak var titre: UINavigationItem!
     @IBOutlet weak var ValiderButton: UIBarButtonItem!
     @IBAction func ValiderActionButton(_ sender: Any) {
-        //TODO : enregistrer textField en BDD
-        //Inutile pour l'instant
     }
     
     func textFieldChanged(cell : UtilisationModeleTableViewCell, reel:Bool) {
@@ -182,6 +180,26 @@ class UtilisationModeleTableViewController: UITableViewController , NSFetchedRes
         else {print("ERROR:  /UT-Modele/recupModule/fetchRequest MODULE failed")}
     }
     
+//Récupération des parametre d'un module spécifique
+    func fetchParametresFromModule(idModule:String) -> [Parametre]{
+        // Création Fetch Request
+        let fetchRequest: NSFetchRequest<Parametre> = Parametre.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "nom", ascending: true)]
+        let predicate = NSPredicate(format: "module.nom == %@ ", idModule)
+        fetchRequest.predicate=predicate
+        
+        guard let parametresFetched = try? persistentContainer.viewContext.fetch(fetchRequest) else
+        {
+            ///print("DEBUG : /UT-Modele / FetchParametres /  fetchParametes from module")
+            return [Parametre]()
+        }
+        
+        //if (parametresFetched.count != 1) {print("DEBUG : /UT-Modele / FetchParametres /  Nombre de parameter :", parametresFetched.count)}
+        
+        return parametresFetched
+    }
+    
+    
     
 ///FetchedController
     //Definition du FetchController : Request / Predicate / Instanciation / delegate
@@ -253,43 +271,8 @@ class UtilisationModeleTableViewController: UITableViewController , NSFetchedRes
         tableView.endUpdates()
     }
     
-    //Récupération des parametre d'un module spécifique
-    func fetchParametresFromModule(idModule:String) -> [Parametre]{
-        // Création Fetch Request
-        let fetchRequest: NSFetchRequest<Parametre> = Parametre.fetchRequest()
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "nom", ascending: true)]
-        let predicate = NSPredicate(format: "module.nom == %@ ", idModule)
-        fetchRequest.predicate=predicate
     
-        guard let parametresFetched = try? persistentContainer.viewContext.fetch(fetchRequest) else
-        {
-            ///print("DEBUG : /UT-Modele / FetchParametres /  fetchParametes from module")
-            return [Parametre]()
-        }
-        
-        //if (parametresFetched.count != 1) {print("DEBUG : /UT-Modele / FetchParametres /  Nombre de parameter :", parametresFetched.count)}
-        
-        return parametresFetched
-    }
-    
-///Segue functions
-    //Passage d'argument dans les segue
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 
-
-        if segue.identifier == "UseModele" {
-            //Récupération du modèle sur lequel on a cliqué
-            guard let indexPath = tableView.indexPathForSelectedRow else {return }
-            let modele = fetchedResultsController.object(at: indexPath)
-
-            //Arguement : nom du modèle
-            if let destinationVC = segue.destination as? UtilisationModeleTableViewController
-            {
-                ///print("DEBUG : /modele / segueAction / modele.nom : ", modele.nom)
-                destinationVC.idModele = modele.nom!
-            }
-        }
-    }
     
 ///Autres
     //Fonction de sauvegarde
